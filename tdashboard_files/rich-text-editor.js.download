@@ -1,0 +1,1587 @@
+﻿/**
+ * RichTextEditor using Tiptap Utility
+ */
+
+class RichTextEditor {
+    constructor() {
+        this.editor = null;
+        this.containerId = null;
+    }
+
+    CustomDropdown = class {
+        constructor(element, editorInstance) {
+            this.element = element;
+            this.editor = editorInstance;
+            this.button = element.querySelector('.rte-dropdown-button');
+            this.menu = element.querySelector('.rte-dropdown-menu');
+            this.textElement = this.button.querySelector('.rte-dropdown-text');
+            this.options = element.querySelectorAll('.rte-dropdown-option');
+            this.isOpen = false;
+            this.init();
+        }
+
+        init() {
+            this.button.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.toggle();
+            });
+
+            this.options.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    this.selectOption(option);
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!this.element.contains(e.target)) {
+                    this.close();
+                }
+            });
+        }
+
+        selectOption(option) {
+            const value = option.dataset.value;
+            const command = this.button.dataset.command;
+
+            if (value) {
+                this.textElement.textContent = option.textContent;
+            }
+
+            this.close();
+            this.editor.executeCommand(command, value);
+        }
+
+        updateValue(value, actual) {
+            const selectedOption = this.element.querySelector(`.rte-dropdown-option[data-value='${value}']`);
+            if (selectedOption) {
+                this.textElement.textContent = selectedOption.textContent;
+                // Update selected state
+                this.options.forEach(opt => opt.classList.remove('selected'));
+                selectedOption.classList.add('selected');
+            } else if (actual || value) {
+                this.textElement.textContent = actual || value;
+                this.options.forEach(opt => opt.classList.remove('selected'));
+            } else {
+                // Reset to placeholder
+                const placeholder = this.element.querySelector('.rte-dropdown-option.rte-placeholder');
+                this.textElement.textContent = placeholder ? placeholder.textContent : 'Select';
+            }
+            this.button.classList.toggle('is-active', !!value);
+        }
+
+        toggle() {
+            this.isOpen ? this.close() : this.open();
+        }
+
+        open() {
+            this.isOpen = true;
+            this.button.classList.add('active');
+            this.menu.classList.add('open');
+        }
+
+        close() {
+            this.isOpen = false;
+            this.button.classList.remove('active');
+            this.menu.classList.remove('open');
+        }
+    }
+
+    // Generate toolbar HTML
+    generateToolbarHTML() {
+        return `
+            <div class="tiptap-toolbar">
+                <!-- Text Formatting Group -->
+                <div class="toolbar-group">
+                    <button disabled type="button" data-command="bold" title="Bold (Ctrl+B)">
+                        <strong>B</strong>
+                    </button>
+                    <button disabled type="button" data-command="italic" title="Italic (Ctrl+I)">
+                        <em>I</em>
+                    </button>
+                    <button disabled type="button" data-command="underline" title="Underline (Ctrl+U)">
+                        <u>U</u>
+                    </button>
+                    <button disabled type="button" data-command="strikethrough" title="Strikethrough">
+                        <s>S</s>
+                    </button>
+                    <button disabled type="button" data-command="code" title="Inline Code">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M7 8l-4 4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                          <path d="M17 8l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                          <path d="M14 4l-4 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                    </button>
+                    <button disabled type="button" data-command="blockquote" title="Quote">
+                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M.78,8.89c0-3.07,1.53-4.3,4.3-4.34L5.38,6C3.78,6.17,3,7,3.1,8.31H4.54V12H.78Zm5.9,0c0-3.07,1.53-4.3,4.3-4.34L11.28,6C9.68,6.17,8.89,7,9,8.31h1.44V12H6.68Z" fill="currentColor"/>
+                          <path d="M16.94,15.11c0,3.07-1.53,4.3-4.3,4.34L12.35,18c1.6-.16,2.39-1,2.28-2.3H13.18V12h3.76Zm5.9,0c0,3.07-1.53,4.3-4.3,4.34L18.24,18c1.6-.16,2.39-1,2.28-2.3H19.08V12h3.76Z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="separator"></div>
+
+                <!-- Text Alignment Group -->
+                <div class="toolbar-group">
+                    <button disabled type="button" data-command="alignLeft" title="Align Left (Ctrl+Shift+L)">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/>
+                          <rect x="3" y="10" width="12" height="2" rx="1" fill="currentColor"/>
+                          <rect x="3" y="14" width="18" height="2" rx="1" fill="currentColor"/>
+                          <rect x="3" y="18" width="12" height="2" rx="1" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <button disabled type="button" data-command="alignCenter" title="Align Center (Ctrl+Shift+E)">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/>
+                          <rect x="5" y="10" width="14" height="2" rx="1" fill="currentColor"/>
+                          <rect x="3" y="14" width="18" height="2" rx="1" fill="currentColor"/>
+                          <rect x="5" y="18" width="14" height="2" rx="1" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <button disabled type="button" data-command="alignRight" title="Align Right (Ctrl+Shift+R)">
+                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/>
+                          <rect x="9" y="10" width="12" height="2" rx="1" fill="currentColor"/>
+                          <rect x="3" y="14" width="18" height="2" rx="1" fill="currentColor"/>
+                          <rect x="9" y="18" width="12" height="2" rx="1" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <button disabled type="button" data-command="alignJustify" title="Justify (Ctrl+Shift+J)">
+                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor"/>
+                          <rect x="3" y="10" width="18" height="2" rx="1" fill="currentColor"/>
+                          <rect x="3" y="14" width="18" height="2" rx="1" fill="currentColor"/>
+                          <rect x="3" y="18" width="18" height="2" rx="1" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <!-- Lists Group -->
+                    <button disabled type="button" data-command="bulletList" title="Bullet List">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="6" cy="7" r="2" fill="currentColor"/>
+                          <circle cx="6" cy="12" r="2" fill="currentColor"/>
+                          <circle cx="6" cy="17" r="2" fill="currentColor"/>
+                          <rect x="11" y="6" width="10" height="2" rx="1" fill="currentColor"/>
+                          <rect x="11" y="11" width="10" height="2" rx="1" fill="currentColor"/>
+                          <rect x="11" y="16" width="10" height="2" rx="1" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <button disabled type="button" data-command="orderedList" title="Numbered List">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <text x="6" y="9" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="currentColor">1</text>
+                          <text x="6" y="14" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="currentColor">2</text>
+                          <text x="6" y="19" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="currentColor">3</text>
+                          <rect x="11" y="6" width="10" height="2" rx="1" fill="currentColor"/>
+                          <rect x="11" y="11" width="10" height="2" rx="1" fill="currentColor"/>
+                          <rect x="11" y="16" width="10" height="2" rx="1" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="separator"></div>
+
+                <!-- Color Tools Group -->
+                <div class="toolbar-group">
+                    <div class="tiptap-color-picker">
+                        <input disabled id="textColorPicker" type="color" data-command="textColor" title="Text Color" value="#000000">
+                        <label for="textColorPicker">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <!-- Letter A -->
+                              <path d="M12 3L5 17h2.5L8.5 14h7L16.5 17H19L12 3zm-2.5 8L12 6l2.5 5h-5z" fill="currentColor"/>
+                              <!-- Color bar underneath -->
+                              <rect x="4" y="19" width="16" height="2" rx="1" fill="#FF0000"/>
+                            </svg>
+                        </label>
+                    </div>
+                    <div class="tiptap-color-picker">
+                        <input disabled id="backgroundColorPicker" type="color" data-command="backgroundColor" title="Highlight" value="#ffff00">
+                        <label for="backgroundColorPicker">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <!-- Highlighter pencil -->
+                              <path d="m20.707 5.826-3.535-3.533a.999.999 0 0 0-1.408-.006L7.096 10.82a1.01 1.01 0 0 0-.273.488l-1.024 4.437L4 18h2.828l1.142-1.129 3.588-.828c.18-.042.345-.133.477-.262l8.667-8.535a1 1 0 0 0 .005-1.42zm-9.369 7.833-2.121-2.12 7.243-7.131 2.12 2.12-7.242 7.131z" fill="currentColor"/>
+                              <!-- Yellow highlight line -->
+                              <path d="M4 20h16v2H4z" fill="#FFD700"/>
+                            </svg>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="separator"></div>
+
+                <!-- Links and Tools Group -->
+                <div class="toolbar-group">
+                    <button disabled type="button" data-command="link" title="Insert Link (Ctrl+K)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                    </button>
+                    <button disabled type="button" data-command="unlink" title="Remove Link">
+                        <svg width="16" height="16" viewBox="0 0 326.157 326.157" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <!-- Top right X mark -->
+                          <path d="M206.342,275.032c-8.284,0-15,6.716-15,15v21.124c0,8.284,6.716,15,15,15s15-6.716,15-15v-21.124 C221.342,281.748,214.626,275.032,206.342,275.032z" fill="currentColor"/>
+                          <!-- Right side X mark -->
+                          <path d="M311.158,191.343l-21.125-0.001c-0.001,0,0,0-0.001,0c-8.283,0-15,6.716-15,14.999 c0,8.284,6.715,15.001,14.999,15.001l21.125,0.001c0.001,0,0.001,0,0.001,0c8.283,0,15-6.716,15-14.999 C326.157,198.06,319.442,191.343,311.158,191.343z" fill="currentColor"/>
+                          <!-- Diagonal X mark -->
+                          <path d="M276.127,254.913c-5.858-5.858-15.355-5.857-21.214-0.001c-5.857,5.858-5.858,15.355-0.001,21.214 l14.938,14.938c2.93,2.93,6.768,4.394,10.607,4.394c3.838,0,7.678-1.465,10.607-4.393c5.857-5.858,5.858-15.355,0.001-21.214 L276.127,254.913z" fill="currentColor"/>
+                          <!-- Top left elements -->
+                          <path d="M119.813,51.124c8.284,0,15-6.716,15-15V15c0-8.284-6.716-15-15-15c-8.284,0-15,6.716-15,15v21.124 C104.813,44.408,111.529,51.124,119.813,51.124z" fill="currentColor"/>
+                          <!-- Left side element -->
+                          <path d="M36.124,134.815c8.284,0,15-6.716,15-14.999c0-8.284-6.715-15.001-15-15.001L15,104.814h0 c-8.284,0-15,6.716-15,14.999C0,128.097,6.715,134.814,15,134.814L36.124,134.815C36.124,134.815,36.124,134.815,36.124,134.815z" fill="currentColor"/>
+                          <!-- Top left diagonal -->
+                          <path d="M50.029,71.243c2.929,2.93,6.768,4.394,10.607,4.394c3.838,0,7.678-1.465,10.607-4.393 c5.858-5.858,5.858-15.355,0-21.214L56.305,35.092c-5.857-5.858-15.355-5.857-21.213-0.001c-5.858,5.858-5.858,15.355,0,21.214 L50.029,71.243z" fill="currentColor"/>
+                          <!-- Bottom left broken chain -->
+                          <path d="M194.898,237.323c5.858-5.857,5.858-15.355,0-21.213c-5.857-5.857-15.355-5.857-21.213,0l-42.423,42.423 c-0.002,0.002-0.003,0.003-0.005,0.005c-17.543,17.545-46.092,17.546-63.638,0s-17.546-46.095,0-63.641l42.426-42.426 c5.858-5.857,5.858-15.355,0-21.213c-5.857-5.857-15.355-5.857-21.213,0l-42.426,42.426c-29.243,29.242-29.243,76.823,0,106.066 c14.166,14.166,33,21.967,53.032,21.967c0.001,0,0,0,0.001,0c20.032,0,38.867-7.802,53.032-21.967 c0.002-0.002,0.003-0.003,0.005-0.005L194.898,237.323z" fill="currentColor"/>
+                          <!-- Top right broken chain -->
+                          <path d="M279.75,46.405c-14.164-14.165-32.998-21.967-53.031-21.967c-0.001,0,0.001,0-0.001,0 c-20.032,0-38.867,7.802-53.032,21.967l-0.001,0.001l-0.001,0.001l-42.425,42.426c-5.858,5.857-5.858,15.355,0,21.213 c2.929,2.929,6.768,4.394,10.606,4.394c3.839,0,7.678-1.465,10.607-4.394l42.425-42.426l0.001-0.001l0.001-0.001 c8.499-8.499,19.8-13.18,31.82-13.18c12.02,0,23.319,4.681,31.818,13.18c17.546,17.546,17.546,46.095,0,63.641l-42.426,42.426 c-5.858,5.857-5.858,15.355,0,21.213c2.929,2.929,6.768,4.394,10.607,4.394c3.839,0,7.678-1.465,10.606-4.394l42.426-42.426 C308.993,123.23,308.993,75.648,279.75,46.405z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="separator"></div>
+
+                <div class="toolbar-group">
+                    <button disabled type="button" data-command="clearFormat" title="Clear Formatting">
+                        <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M29.4384,16.5715l-7.985-7.9856a2.0014,2.0014,0,0,0-2.8291,0l-5.3584,5.3584L9,2H7L2,16H4l.999-3h6l.8035,2.4077L4.5858,22.6244a2,2,0,0,0,0,2.8282L9.1316,30h9.5908l10.716-10.717A1.9173,1.9173,0,0,0,29.4384,16.5715ZM5.6653,11l2.331-7,2.3355,7Zm12.229,17H9.96L6,24.0381l6.3123-6.3115L20.24,25.6538Zm3.76-3.76-7.9275-7.9272L20.0393,10l7.9268,7.9272Z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <button disabled type="button" data-command="undo" title="Undo">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M3 7v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                          <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                    </button>
+                    <button disabled type="button" data-command="redo" title="Redo">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M21 7v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                          <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3L21 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="separator"></div>
+
+                <div class="tiptap-dropdown">
+                    <button disabled type="button" class="rte-dropdown-button" data-command="table" title="Table">
+                        <span class="rte-dropdown-text">Table</span>
+                        <svg class="rte-dropdown-arrow" viewBox="0 0 12 12" fill="currentColor">
+                            <path d="M6 8.5L2.5 5h7L6 8.5z"/>
+                        </svg>
+                    </button>
+                    <div class="rte-dropdown-menu">
+                        <div class="rte-dropdown-option" data-value="insertTable">Insert Table</div>
+                        <div class="rte-dropdown-option" data-value="deleteTable">Delete Table</div>
+                        <div class="rte-dropdown-option" data-value="addColumnBefore">Add Column Before</div>
+                        <div class="rte-dropdown-option" data-value="addColumnAfter">Add Column After</div>
+                        <div class="rte-dropdown-option" data-value="deleteColumn">Delete Column</div>
+                        <div class="rte-dropdown-option" data-value="addRowBefore">Add Row Before</div>
+                        <div class="rte-dropdown-option" data-value="addRowAfter">Add Row After</div>
+                        <div class="rte-dropdown-option" data-value="deleteRow">Delete Row</div>
+                        <div class="rte-dropdown-option" data-value="mergeCells">Merge Cells</div>
+                        <div class="rte-dropdown-option" data-value="splitCell">Split Cell</div>
+                        <div class="rte-dropdown-option" data-value="toggleHeaderColumn">Toggle Header Column</div>
+                        <div class="rte-dropdown-option" data-value="toggleHeaderRow">Toggle Header Row</div>
+                        <div class="rte-dropdown-option" data-value="toggleHeaderCell">Toggle Header Cell</div>
+                    </div>
+                </div>
+
+                <!-- Font Size Dropdown -->
+                <div class="tiptap-dropdown">
+                    <button disabled type="button" class="rte-dropdown-button" data-command="fontSize" title="Font Size">
+                        <span class="rte-dropdown-text">Font Size</span>
+                        <svg class="rte-dropdown-arrow" viewBox="0 0 12 12" fill="currentColor">
+                            <path d="M6 8.5L2.5 5h7L6 8.5z"/>
+                        </svg>
+                    </button>
+                    <div class="rte-dropdown-menu">
+                        <div class="rte-dropdown-option rte-placeholder" data-value="">Font Size</div>
+                        <div class="rte-dropdown-option" data-value="8px">8px</div>
+                        <div class="rte-dropdown-option" data-value="9px">9px</div>
+                        <div class="rte-dropdown-option" data-value="10px">10px</div>
+                        <div class="rte-dropdown-option" data-value="11px">11px</div>
+                        <div class="rte-dropdown-option" data-value="12px">12px</div>
+                        <div class="rte-dropdown-option" data-value="14px">14px</div>
+                        <div class="rte-dropdown-option" data-value="16px">16px</div>
+                        <div class="rte-dropdown-option" data-value="18px">18px</div>
+                        <div class="rte-dropdown-option" data-value="20px">20px</div>
+                        <div class="rte-dropdown-option" data-value="22px">22px</div>
+                        <div class="rte-dropdown-option" data-value="24px">24px</div>
+                        <div class="rte-dropdown-option" data-value="26px">26px</div>
+                        <div class="rte-dropdown-option" data-value="28px">28px</div>
+                        <div class="rte-dropdown-option" data-value="32px">32px</div>
+                        <div class="rte-dropdown-option" data-value="36px">36px</div>
+                        <div class="rte-dropdown-option" data-value="48px">48px</div>
+                    </div>
+                </div>
+
+                <!-- Font Family Dropdown -->
+                <div class="tiptap-dropdown">
+                    <button disabled type="button" class="rte-dropdown-button" data-command="fontFamily" title="Font Family">
+                        <span class="rte-dropdown-text">Font Family</span>
+                        <svg class="rte-dropdown-arrow" viewBox="0 0 12 12" fill="currentColor">
+                            <path d="M6 8.5L2.5 5h7L6 8.5z"/>
+                        </svg>
+                    </button>
+                    <div class="rte-dropdown-menu">
+                        <div class="rte-dropdown-option rte-placeholder" data-value="">Font Family</div>
+                        <div class="rte-dropdown-option font-preview" data-value="ms gothic,sans-serif" style="--font-family: 'MS Gothic', sans-serif;">MS Gothic</div>
+                        <div class="rte-dropdown-option font-preview" data-value="yu gothic,sans-serif" style="--font-family: 'Yu Gothic', sans-serif;">Yu Gothic</div>
+                        <div class="rte-dropdown-option font-preview" data-value="yu gothic light,sans-serif" style="--font-family: 'Yu Gothic Light', sans-serif;">Yu Gothic Light</div>
+                        <div class="rte-dropdown-option font-preview" data-value="arial,helvetica,sans-serif" style="--font-family: Arial, sans-serif;">Sans serif</div>
+                        <div class="rte-dropdown-option font-preview" data-value="times new roman,serif" style="--font-family: 'Times New Roman', serif;">Serif</div>
+                        <div class="rte-dropdown-option font-preview" data-value="arial black,sans-serif" style="--font-family: 'Arial Black', sans-serif;">Wide</div>
+                        <div class="rte-dropdown-option font-preview" data-value="arial narrow,sans-serif" style="--font-family: 'Arial Narrow', sans-serif;">Narrow</div>
+                        <div class="rte-dropdown-option font-preview" data-value="comic sans ms,sans-serif" style="--font-family: 'Comic Sans MS', sans-serif;">Comic Sans MS</div>
+                        <div class="rte-dropdown-option font-preview" data-value="courier new,monospace" style="--font-family: 'Courier New', monospace;">Courier New</div>
+                        <div class="rte-dropdown-option font-preview" data-value="garamond,serif" style="--font-family: Garamond, serif;">Garamond</div>
+                        <div class="rte-dropdown-option font-preview" data-value="georgia,serif" style="--font-family: Georgia, serif;">Georgia</div>
+                        <div class="rte-dropdown-option font-preview" data-value="tahoma,sans-serif" style="--font-family: Tahoma, sans-serif;">Tahoma</div>
+                        <div class="rte-dropdown-option font-preview" data-value="trebuchet ms,sans-serif" style="--font-family: 'Trebuchet MS', sans-serif;">Trebuchet MS</div>
+                        <div class="rte-dropdown-option font-preview" data-value="verdana,sans-serif" style="--font-family: Verdana, sans-serif;">Verdana</div>
+                    </div>
+                </div>
+
+                <!-- Formatting Dropdown -->
+                <div class="tiptap-dropdown">
+                    <button disabled type="button" class="rte-dropdown-button" data-command="heading" title="Text Formatting">
+                        <span class="rte-dropdown-text">Formatting</span>
+                        <svg class="rte-dropdown-arrow" viewBox="0 0 12 12" fill="currentColor">
+                            <path d="M6 8.5L2.5 5h7L6 8.5z"/>
+                        </svg>
+                    </button>
+                    <div class="rte-dropdown-menu">
+                        <div class="rte-dropdown-option rte-placeholder" data-value="">Formatting</div>
+                        <div class="rte-dropdown-option" data-value="paragraph">Paragraph</div>
+                        <div class="rte-dropdown-option" data-value="1">Heading 1</div>
+                        <div class="rte-dropdown-option" data-value="2">Heading 2</div>
+                        <div class="rte-dropdown-option" data-value="3">Heading 3</div>
+                        <div class="rte-dropdown-option" data-value="4">Heading 4</div>
+                        <div class="rte-dropdown-option" data-value="5">Heading 5</div>
+                        <div class="rte-dropdown-option" data-value="6">Heading 6</div>
+                    </div>
+                </div>
+                
+            </div>
+        `;
+    }
+
+    // Generate complete editor HTML structure
+    generateEditorHTML(editorStyle = "") {
+        return `
+            <div class="tiptap-editor-container">
+                ${this.generateToolbarHTML()}
+                <div class="tiptap-editor" style="${editorStyle}">
+                    <div class="tiptap-loading" style="${editorStyle}">Loading editor...</div>
+                </div>
+                <div class="tiptap-counter"></div>
+            </div>
+        `;
+    }
+
+    // Initialize the editor
+    async init(containerId, options = {}) {
+        this.containerId = containerId;
+        this.options = {
+            content: '',
+            placeholder: 'Rich Text Content...',
+            onUpdate: null,
+            onReady: null,
+            disable: false,
+            height: 150,
+            maxLength: null,
+            styles: "",
+            ...options
+        };
+
+        const stylesWithHeight = `height: ${this.options.height}px;overflow: auto;${this.options.styles}`;
+        // Get container and inject HTML
+        const container = document.getElementById(containerId);
+        if (!container) {
+            console.error(`RichTextEditor: Container with id "${containerId}" not found`);
+            return null;
+        }
+
+        container.innerHTML = this.generateEditorHTML(stylesWithHeight);
+
+        try {
+            // Dynamically import Tiptap modules
+            const { Extension, Editor, Mark, mergeAttributes } = await import('https://esm.sh/@tiptap/core');
+            const StarterKit = (await import('https://esm.sh/@tiptap/starter-kit')).default;
+            const { Plugin } = await import('https://esm.sh/prosemirror-state');
+            const { DOMSerializer, DOMParser } = await import('https://esm.sh/prosemirror-model');
+            const TextAlign = (await import('https://esm.sh/@tiptap/extension-text-align')).default;
+            const { TextStyle, FontSize } = await import('https://esm.sh/@tiptap/extension-text-style');
+            const TextColor = (await import('https://esm.sh/@tiptap/extension-color')).default;
+            const Highlight = (await import('https://esm.sh/@tiptap/extension-highlight')).default;
+            const FontFamily = (await import('https://esm.sh/@tiptap/extension-font-family')).default;
+            const CharacterCount = (await import('https://esm.sh/@tiptap/extension-character-count')).default;
+            const { TableKit } = await import('https://esm.sh/@tiptap/extension-table');
+
+            const LineIndent = Mark.create({
+                name: 'lineIndent',
+
+                addOptions() {
+                    return {
+                        step: 20, // px per indent level
+                    }
+                },
+
+                addAttributes() {
+                    return {
+                        level: {
+                            default: 0,
+                            parseHTML: element => {
+                                const dataIndent = element.getAttribute('data-indent')
+                                if (dataIndent) {
+                                    return parseInt(dataIndent, 10) || 0
+                                }
+                                // Fallback: parse from margin-left style
+                                const marginMatch = element.style.marginLeft?.match(/(\d+)px/)
+                                if (marginMatch) {
+                                    return Math.round(parseInt(marginMatch[1], 10) / this.options.step)
+                                }
+                                return 0
+                            },
+                            renderHTML: attributes => {
+                                if (!attributes.level || attributes.level <= 0) {
+                                    return {}
+                                }
+                                return {
+                                    'data-indent': attributes.level,
+                                    style: `margin-left: ${attributes.level * this.options.step}px; display: inline-block;`
+                                }
+                            },
+                        },
+                    }
+                },
+
+                parseHTML() {
+                    return [
+                        {
+                            tag: 'span[data-indent]',
+                        },
+                    ]
+                },
+
+                renderHTML({ HTMLAttributes }) {
+                    return ['span', HTMLAttributes, 0]
+                },
+            })
+
+            const FormatPainter = Extension.create({
+                name: 'formatPainter',
+
+                addOptions() {
+                    return {
+                        // Marks to copy (you can customize this based on your needs)
+                        copyableMarks: ['bold', 'italic', 'underline', 'strike', 'code', 'textStyle', 'highlight', 'link'],
+                        // Node attributes to copy
+                        copyableNodeAttrs: ['textAlign', 'indent'],
+                        // Whether to copy node-level formatting
+                        copyNodeFormatting: true,
+                    }
+                },
+
+                addStorage() {
+                    return {
+                        copiedFormat: null,
+                        isActive: false,
+                    }
+                },
+
+                addCommands() {
+                    return {
+                        // Copy formatting from current selection
+                        copyFormat: () => ({ state, commands }) => {
+                            const { from, to, $from } = state.selection
+                            const copiedFormat = {
+                                marks: [],
+                                nodeAttrs: {},
+                                nodeType: null,
+                            }
+
+                            // Copy marks from the selection
+                            if (!state.selection.empty) {
+                                // Get marks from selected text
+                                const marks = []
+                                state.doc.nodesBetween(from, to, (node) => {
+                                    if (node.isText && node.marks) {
+                                        node.marks.forEach(mark => {
+                                            if (this.options.copyableMarks.includes(mark.type.name)) {
+                                                // Only add if not already in marks array
+                                                if (!marks.find(m => m.type.name === mark.type.name)) {
+                                                    marks.push(mark)
+                                                }
+                                            }
+                                        })
+                                    }
+                                })
+                                copiedFormat.marks = marks
+                            } else {
+                                // Get marks at cursor position
+                                const resolvedPos = state.doc.resolve(from)
+                                const marks = resolvedPos.marks()
+                                copiedFormat.marks = marks.filter(mark =>
+                                    this.options.copyableMarks.includes(mark.type.name)
+                                )
+                            }
+
+                            // Copy node attributes if enabled
+                            if (this.options.copyNodeFormatting) {
+                                const node = $from.parent
+                                if (node && node.attrs) {
+                                    this.options.copyableNodeAttrs.forEach(attr => {
+                                        if (node.attrs[attr] !== undefined && node.attrs[attr] !== null) {
+                                            copiedFormat.nodeAttrs[attr] = node.attrs[attr]
+                                        }
+                                    })
+                                }
+                                copiedFormat.nodeType = node?.type?.name
+                            }
+
+                            // Store the copied format
+                            this.storage.copiedFormat = copiedFormat
+                            return true
+                        },
+
+                        // Apply copied formatting to current selection
+                        pasteFormat: () => ({ state, dispatch, tr, commands }) => {
+                            if (!this.storage.copiedFormat) {
+                                return false
+                            }
+
+                            const { from, to, $from } = state.selection
+                            const { marks, nodeAttrs, nodeType } = this.storage.copiedFormat
+
+                            // Apply to selection or cursor position
+                            if (!state.selection.empty) {
+                                // Apply marks to selected text
+                                marks.forEach(mark => {
+                                    tr.addMark(from, to, mark)
+                                })
+                            } else {
+                                // Apply marks to cursor (for next typed text)
+                                marks.forEach(mark => {
+                                    tr.addStoredMark(mark)
+                                })
+                            }
+
+                            // Apply node attributes if applicable
+                            if (this.options.copyNodeFormatting && Object.keys(nodeAttrs).length > 0) {
+                                const currentNode = $from.parent
+                                if (currentNode && this.options.copyableNodeAttrs.some(attr => nodeAttrs[attr] !== undefined)) {
+                                    const newAttrs = { ...currentNode.attrs }
+                                    Object.keys(nodeAttrs).forEach(attr => {
+                                        if (this.options.copyableNodeAttrs.includes(attr)) {
+                                            newAttrs[attr] = nodeAttrs[attr]
+                                        }
+                                    })
+                                    tr.setNodeMarkup($from.before(), currentNode.type, newAttrs)
+                                }
+                            }
+
+                            if (dispatch) {
+                                dispatch(tr)
+                            }
+                            return true
+                        },
+
+                        // Toggle format painter mode
+                        toggleFormatPainter: () => ({ commands }) => {
+                            if (this.storage.isActive) {
+                                this.storage.isActive = false
+                                this.storage.copiedFormat = null
+                            } else {
+                                commands.copyFormat()
+                                this.storage.isActive = true
+                            }
+                            return true
+                        },
+
+                        // Clear copied format
+                        clearFormat: () => () => {
+                            this.storage.copiedFormat = null
+                            this.storage.isActive = false
+                            return true
+                        },
+
+                        // Check if format painter has copied format
+                        hasFormat: () => () => {
+                            return !!this.storage.copiedFormat
+                        },
+
+                        // Get format painter status
+                        isFormatPainterActive: () => () => {
+                            return this.storage.isActive
+                        }
+                    }
+                },
+
+                addKeyboardShortcuts() {
+                    return {
+                        // Ctrl/Cmd + Shift + C to copy format
+                        'Mod-Shift-c': () => this.editor.commands.copyFormat(),
+                        // Ctrl/Cmd + Shift + V to paste format
+                        'Mod-Shift-v': () => this.editor.commands.pasteFormat(),
+                        // Escape to exit format painter mode
+                        'Escape': () => {
+                            if (this.storage.isActive) {
+                                this.editor.commands.clearFormat()
+                                return true
+                            }
+                            return false
+                        }
+                    }
+                },
+
+                // Auto-apply format when clicking if format painter is active
+                onCreate() {
+                    this.editor.on('selectionUpdate', ({ editor }) => {
+                        if (this.storage.isActive && this.storage.copiedFormat) {
+                            // Small delay to ensure selection is properly set
+                            setTimeout(() => {
+                                if (!editor.state.selection.empty) {
+                                    editor.commands.pasteFormat()
+                                    // Optionally disable format painter after one use
+                                    // this.storage.isActive = false
+                                }
+                            }, 10)
+                        }
+                    })
+                },
+            });
+
+            // Main CustomIndent extension
+            const CustomIndent = Extension.create({
+                name: 'customIndent',
+
+                addOptions() {
+                    return {
+                        types: ['paragraph', 'heading', 'listItem'],
+                        minLevel: 0,
+                        maxLevel: 8,
+                        step: 20, // px per indent
+                    }
+                },
+
+                addExtensions() {
+                    return [
+                        LineIndent.configure({
+                            step: this.options.step,
+                        })
+                    ]
+                },
+
+                // Make "indent" a real node attribute for block-level elements
+                addGlobalAttributes() {
+                    return [
+                        {
+                            types: this.options.types,
+                            attributes: {
+                                indent: {
+                                    default: 0,
+                                    renderHTML: attrs => {
+                                        if (!attrs.indent || attrs.indent <= this.options.minLevel) return {}
+                                        return { style: `margin-left: ${attrs.indent * this.options.step}px;` }
+                                    },
+                                    parseHTML: element => {
+                                        const margin = element.style.marginLeft
+                                        if (!margin) return 0
+                                        const px = parseInt(margin, 10) || 0
+                                        return Math.round(px / this.options.step)
+                                    },
+                                },
+                            },
+                        },
+                    ]
+                },
+
+                addCommands() {
+                    // Block-level indent (for when there are no line breaks)
+                    const setNodeIndentMarkup = (tr, pos, delta) => {
+                        const node = tr.doc.nodeAt(pos)
+                        if (!node) return tr
+
+                        const nextLevel = (node.attrs.indent || 0) + delta
+                        const minLevel = this.options.minLevel
+                        const maxLevel = this.options.maxLevel
+                        const indent = Math.min(maxLevel, Math.max(minLevel, nextLevel))
+
+                        if (indent !== node.attrs.indent) {
+                            const nodeAttrs = { ...node.attrs, indent }
+                            if (indent === 0) delete nodeAttrs.indent
+                            return tr.setNodeMarkup(pos, node.type, nodeAttrs, node.marks)
+                        }
+
+                        return tr
+                    }
+
+                    // Line-level indent (for text between hardBreaks using lineIndent marks)
+                    const setLineIndent = (tr, state, delta, from, to) => {
+                        // Get current indent level from existing lineIndent marks in the range
+                        let currentLevel = 0
+                        const doc = state.doc
+
+                        // Check for existing lineIndent marks
+                        doc.nodesBetween(from, to, (node, pos) => {
+                            if (node.isText && node.marks) {
+                                const indentMark = node.marks.find(m => m.type.name === 'lineIndent')
+                                if (indentMark && typeof indentMark.attrs.level === 'number') {
+                                    currentLevel = indentMark.attrs.level
+                                    return false // Stop after finding first mark
+                                }
+                            }
+                        })
+
+                        // Calculate new indent level
+                        const minLevel = this.options.minLevel
+                        const maxLevel = this.options.maxLevel
+                        let newLevel = currentLevel + delta
+                        newLevel = Math.max(minLevel, Math.min(maxLevel, newLevel))
+
+                        // Remove existing lineIndent marks in the range
+                        const lineIndentMarkType = state.schema.marks.lineIndent
+                        if (lineIndentMarkType) {
+                            tr.removeMark(from, to, lineIndentMarkType)
+
+                            // Apply new lineIndent mark if needed
+                            if (newLevel > minLevel) {
+                                const newMark = lineIndentMarkType.create({ level: newLevel })
+                                tr.addMark(from, to, newMark)
+                            }
+                        }
+
+                        return tr
+                    }
+
+                    // Find the boundaries of the current line (between hardBreaks)
+                    const findLineBoundaries = ($pos) => {
+                        const block = $pos.parent
+                        const offsetInParent = $pos.parentOffset
+
+                        let lineStart = 0
+                        let lineEnd = block.content.size
+                        let currentPos = 0
+
+                        // Iterate through block content to find hardBreaks
+                        block.content.forEach((child, offset) => {
+                            const childStart = currentPos
+                            const childEnd = currentPos + child.nodeSize
+
+                            if (child.type.name === 'hardBreak') {
+                                if (childEnd <= offsetInParent) {
+                                    // This break is before cursor, line starts after it
+                                    lineStart = childEnd
+                                } else if (childStart >= offsetInParent && lineEnd === block.content.size) {
+                                    // This is the first break after cursor, line ends before it
+                                    lineEnd = childStart
+                                }
+                            }
+                            currentPos += child.nodeSize
+                        })
+
+                        return {
+                            from: $pos.start() + lineStart,
+                            to: $pos.start() + lineEnd,
+                        }
+                    }
+
+                    // Main function to update indent level
+                    const updateIndentLevel = (tr, state, delta) => {
+                        const { $from, $to } = state.selection
+                        const block = $from.parent
+
+                        // Check if we're dealing with a selection across multiple blocks
+                        if ($from.parent !== $to.parent) {
+                            // Multi-block selection - apply block-level indent to each block
+                            state.doc.nodesBetween($from.start(), $to.end(), (node, pos) => {
+                                if (node.isBlock && this.options.types.includes(node.type.name)) {
+                                    tr = setNodeIndentMarkup(tr, pos, delta)
+                                }
+                            })
+                            return tr
+                        }
+
+                        // Single block - check if it contains hardBreaks
+                        const hasHardBreaks = block?.content?.content?.some(child => child.type.name === 'hardBreak')
+
+                        if (hasHardBreaks && !state.selection.empty) {
+                            // Selection within block with hardBreaks - apply line-level indent
+                            tr = setLineIndent(tr, state, delta, state.selection.from, state.selection.to)
+                        } else if (hasHardBreaks) {
+                            // Cursor position within block with hardBreaks - apply line-level indent
+                            const { from, to } = findLineBoundaries($from)
+                            tr = setLineIndent(tr, state, delta, from, to)
+                        } else {
+                            // No hardBreaks - apply block-level indent
+                            tr = setNodeIndentMarkup(tr, $from.before(), delta)
+                        }
+
+                        return tr
+                    }
+
+                    const applyIndent = direction => () => ({ state, dispatch }) => {
+                        let tr = state.tr.setSelection(state.selection)
+                        tr = updateIndentLevel(tr, state, direction)
+
+                        if (tr.docChanged) {
+                            if (dispatch) dispatch(tr.scrollIntoView())
+                            return true
+                        }
+                        return false
+                    }
+
+                    return {
+                        indent: applyIndent(1),
+                        outdent: applyIndent(-1),
+                    }
+                },
+
+                addKeyboardShortcuts() {
+                    return {
+                        Tab: () => this.editor.commands.indent(),
+                        'Shift-Tab': () => this.editor.commands.outdent(),
+                    }
+                },
+            })
+
+            const CustomHighlight = Highlight.extend({
+                renderHTML({ HTMLAttributes }) {
+                    return [
+                        'span',
+                        mergeAttributes({ style: 'background-color: yellow;' }, HTMLAttributes),
+                        0,
+                    ];
+                },
+                parseHTML() {
+                    return [
+                        { tag: 'span[style*="background-color"]' },
+                    ];
+                },
+            });
+
+            const CustomCharacterCount = CharacterCount.extend({
+                addProseMirrorPlugins() {
+                    const plugins = this.parent?.() || [];
+
+                    // Add paste handling plugin
+                    plugins.push(
+                        new Plugin({
+                            props: {
+                                transformPasted: (slice) => {
+                                    if (!this.options.limit) return slice;
+
+                                    const currentLength = this.storage.characters();
+                                    const remainingChars = this.options.limit - currentLength;
+
+                                    if (remainingChars <= 0) {
+                                        // Return empty slice if no space left
+                                        return slice.constructor.empty;
+                                    }
+
+                                    // Get text content length
+                                    const pasteText = slice.content.textBetween(0, slice.content.size, '');
+
+                                    if (pasteText.length <= remainingChars) {
+                                        // Paste fits within limit
+                                        return slice;
+                                    }
+
+                                    const truncateHTMLContent = (html, maxChars) => {
+                                        const tempDiv = document.createElement('div');
+                                        tempDiv.innerHTML = html;
+
+                                        let charCount = 0;
+
+                                        function processNode(node) {
+                                            if (charCount >= maxChars) {
+                                                node.remove();
+                                                return;
+                                            }
+
+                                            if (node.nodeType === Node.TEXT_NODE) {
+                                                const text = node.textContent;
+                                                const remainingChars = maxChars - charCount;
+
+                                                if (text.length > remainingChars) {
+                                                    node.textContent = text.substring(0, remainingChars);
+                                                    charCount = maxChars;
+                                                } else {
+                                                    charCount += text.length;
+                                                }
+                                            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                                                const children = Array.from(node.childNodes);
+                                                for (const child of children) {
+                                                    if (charCount < maxChars) {
+                                                        processNode(child);
+                                                    } else {
+                                                        child.remove();
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        const children = Array.from(tempDiv.childNodes);
+                                        for (const child of children) {
+                                            processNode(child);
+                                        }
+
+                                        return tempDiv.innerHTML;
+                                    };
+
+                                    const truncateSliceContent = (slice, maxChars) => {
+                                        const { editor } = this;
+                                        const tempDiv = document.createElement('div');
+
+                                        // Convert slice content to HTML
+                                        const serializer = DOMSerializer.fromSchema(editor.schema);
+
+                                        if (serializer) {
+                                            const fragment = serializer.serializeFragment(slice.content);
+                                            tempDiv.appendChild(fragment);
+
+                                            // Truncate HTML content
+                                            const truncatedHTML = truncateHTMLContent(tempDiv.innerHTML, maxChars);
+
+                                            // Parse back to slice
+                                            const parser = DOMParser.fromSchema(editor.schema);
+
+                                            if (parser && truncatedHTML) {
+                                                const tempDiv2 = document.createElement('div');
+                                                tempDiv2.innerHTML = truncatedHTML;
+                                                const doc = parser.parseSlice(tempDiv2);
+                                                return doc;
+                                            }
+                                        }
+
+                                        // Fallback: return empty slice
+                                        return slice.constructor.empty;
+                                    };
+
+
+                                    // Need to truncate - convert to HTML and truncate
+                                    return truncateSliceContent(slice, remainingChars);
+                                }
+                            }
+                        })
+                    );
+
+                    return plugins;
+                },
+            });
+
+            // Create the editor
+            const editorElement = container.querySelector('.tiptap-editor');
+            const toolbarContainer = container.querySelector('.tiptap-toolbar');
+            editorElement.innerHTML = ''; // Remove loading message
+
+            toolbarContainer.querySelectorAll('.rte-dropdown-menu').forEach(dropdown => {
+                dropdown.style.height = `${this.options.height}px`;
+            });
+
+            const editor = new Editor({
+                element: editorElement,
+                extensions: [
+                    StarterKit.configure({
+                        link: {
+                            openOnClick: false,
+                            protocols: ['https', 'http', 'ftp', 'mailto'],
+                            //isAllowedUri: (url) => {
+                            //    try {
+                            //        const { from, to } = this.editor.state.selection; // if user selected some text
+                            //        const previousUrl = this.editor.getAttributes('link').href;
+                            //        const urlRegex = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+                            //        if (!url.match(urlRegex)) {
+                            //            // if user tries to change previous url or some text selected and tries insert link
+                            //            // open popup again
+                            //            if (previousUrl || from != to) { 
+                            //                window.alert("Invalid url!");
+                            //                this.executeCommand('link');
+                            //            }
+                            //            return false;
+                            //        }
+                            //        return true;
+                            //    } catch {
+                            //        return false;
+                            //    }
+                            //}
+                            HTMLAttributes: {
+                                class: 'tiptap-link',
+                            },
+                        }
+                    }),
+                    TextAlign.configure({
+                        types: ['heading', 'paragraph'],
+                    }),
+                    TextStyle,
+                    FontSize,
+                    FontFamily,
+                    TextColor,
+                    TableKit.configure({
+                        table: { resizable: true },
+                    }),
+                    CustomHighlight.configure({
+                        multicolor: true,
+                    }),
+                    CustomCharacterCount.configure({
+                        limit: this.options.maxLength,
+                    }),
+                    CustomIndent,
+                    FormatPainter,
+                ],
+                editorProps: {
+                    handlePaste(view, event) {
+                        const text = event.clipboardData?.getData('text/plain');
+                        const copiedhtml = event.clipboardData?.getData('text/html');
+                        if (!text) return false;
+                        console.log("copied", text, copiedhtml);
+                        // Normalize Windows line endings
+                        const normalized = text.replace(/\r\n/g, '\n');
+                        // Only handle paste when blank lines exist
+                        if (!/\n\s*\n/.test(normalized)) {
+                            return false; // let Tiptap handle normal paste
+                        }
+                        event.preventDefault();
+                        if (!!copiedhtml) editor.commands.insertContent(copiedhtml);
+
+                        // Split on BLANK lines (important!)
+                        const blocks = text.split('\n');
+                        const html = blocks
+                            .map(block => {
+                                const content = block.trim();
+                                return content ? `<p>${content}</p>` : `<p> </p>`;
+                            })
+                            .join('');
+
+                        editor.commands.insertContent(html);
+                        return true;
+                    },
+                },
+                content: this.options.content,
+                onUpdate: ({ editor }) => {
+                    this.updateToolbarState();
+                    this.updateCounter();
+                    if (this.options.onUpdate) {
+                        this.options.onUpdate(editor.getHTML());
+                    }
+                },
+                onSelectionUpdate: () => {
+                    this.updateToolbarState();
+                    this.updateCounter();
+                },
+                onCreate: () => {
+                    if (this.options.disable) this.disable(); else this.enable();
+
+                    this.updateToolbarState();
+                    this.updateCounter();
+                    if (this.options.onReady) {
+                        this.options.onReady(this);
+                    }
+                },
+            });
+
+            this.editor = editor;
+
+            // Bind toolbar events
+            this.bindToolbarEvents(container);
+
+            return this;
+
+        } catch (error) {
+            console.error('RichTextEditor: Failed to load editor dependencies', error);
+            container.innerHTML = '<div class="tiptap-loading" style="color: #d73a49;">Failed to load editor.</div>';
+            return null;
+        }
+    }
+
+    // Bind all toolbar events
+    bindToolbarEvents(container) {
+        // Button clicks
+        container.addEventListener('click', (e) => {
+            const button = e.target.closest('button[data-command]:not(.rte-dropdown-button)');
+            if (button) {
+                e.preventDefault();
+                this.executeCommand(button.dataset.command);
+            }
+        });
+
+        // Keyboard shortcuts
+        container.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key) {
+                    case 'b':
+                        e.preventDefault();
+                        this.executeCommand('bold');
+                        break;
+                    case 'i':
+                        e.preventDefault();
+                        this.executeCommand('italic');
+                        break;
+                    case 'u':
+                        e.preventDefault();
+                        this.executeCommand('underline');
+                        break;
+                    case 'k':
+                        e.preventDefault();
+                        this.executeCommand('link');
+                        break;
+                }
+            }
+        });
+
+        container.addEventListener('input', (e) => {
+            const colorInput = e.target.closest('input[data-command]');
+            if (colorInput) {
+                this.executeCommand(colorInput.dataset.command, colorInput.value);
+            }
+        });
+
+        container.querySelectorAll('.tiptap-dropdown').forEach(dropdown => {
+            dropdown.dropdownInstance = new this.CustomDropdown(dropdown, this);
+        });
+    }
+
+    // Execute toolbar commands
+    executeCommand(command, value = null) {
+        if (!this.editor) return;
+
+        const commands = {
+            bold: () => this.editor.chain().focus().toggleBold().run(),
+            italic: () => this.editor.chain().focus().toggleItalic().run(),
+            underline: () => this.editor.chain().focus().toggleUnderline().run(),
+            strikethrough: () => this.editor.chain().focus().toggleStrike().run(),
+            alignLeft: () => this.editor.chain().focus().setTextAlign('left').run(),
+            alignCenter: () => this.editor.chain().focus().setTextAlign('center').run(),
+            alignRight: () => this.editor.chain().focus().setTextAlign('right').run(),
+            alignJustify: () => this.editor.chain().focus().setTextAlign('justify').run(),
+            bulletList: () => this.editor.chain().focus().toggleBulletList().run(),
+            orderedList: () => this.editor.chain().focus().toggleOrderedList().run(),
+            blockquote: () => this.editor.chain().focus().toggleBlockquote().run(),
+            code: () => this.editor.chain().focus().toggleCode().run(),
+            undo: () => this.editor.chain().focus().undo().run(),
+            redo: () => this.editor.chain().focus().redo().run(),
+            table: () => {
+                // Handle table dropdown - this will be called by dropdown selection
+                const tabelTools = {
+                    insertTable: () => {
+                        this.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+                    },
+                    addColumnBefore: () => {
+                        this.editor.chain().focus().addColumnBefore().run();
+                    },
+                    addColumnAfter: () => {
+                        this.editor.chain().focus().addColumnAfter().run();
+                    },
+                    deleteColumn: () => {
+                        this.editor.chain().focus().deleteColumn().run();
+                    },
+                    addRowBefore: () => {
+                        this.editor.chain().focus().addRowBefore().run();
+                    },
+                    addRowAfter: () => {
+                        this.editor.chain().focus().addRowAfter().run();
+                    },
+                    deleteRow: () => {
+                        this.editor.chain().focus().deleteRow().run();
+                    },
+                    deleteTable: () => {
+                        this.editor.chain().focus().deleteTable().run();
+                    },
+                    mergeCells: () => {
+                        this.editor.chain().focus().mergeCells().run();
+                    },
+                    splitCell: () => {
+                        this.editor.chain().focus().splitCell().run();
+                    },
+                    toggleHeaderColumn: () => {
+                        this.editor.chain().focus().toggleHeaderColumn().run();
+                    },
+                    toggleHeaderRow: () => {
+                        this.editor.chain().focus().toggleHeaderRow().run();
+                    },
+                    toggleHeaderCell: () => {
+                        this.editor.chain().focus().toggleHeaderCell().run();
+                    },
+                };
+
+                tabelTools?.[value]?.();
+            },
+            
+            link: () => {
+                const previousUrl = this.editor.getAttributes('link').href;
+                const url = window.prompt('URL', previousUrl);
+
+                if (url === null) return;
+
+                if (url === '') {
+                    this.editor.chain().focus().extendMarkRange('link').unsetLink().run();
+                    return;
+                }
+
+                const { from, empty } = this.editor.state.selection;
+
+                if (empty) {
+                    this.editor.chain().focus().insertContent(url).setTextSelection({ from, to: from + url.length }).setLink({ href: url }).run();
+                } else {
+                    this.editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+                }
+            },
+            unlink: () => this.editor.chain().focus().unsetLink().run(),
+            fontFamily: () => {
+                if (value && value !== '') {
+                    this.editor.chain().focus().setFontFamily(value).run();
+                } else {
+                    this.editor.chain().focus().unsetFontFamily().run();
+                }
+            },
+            fontSize: () => {
+                if (value && value !== '') {
+                    this.editor.chain().focus().setFontSize(value).run();
+                } else {
+                    this.editor.chain().focus().unsetFontSize().run();
+                }
+            },
+            heading: () => {
+                if (value === 'paragraph' || value === '') {
+                    this.editor.chain().focus().setParagraph().run();
+                } else if (value) {
+                    const level = parseInt(value);
+                    if (level >= 1 && level <= 6) {
+                        this.editor.chain().focus().setHeading({ level }).run();
+                    }
+                }
+            },
+            clearFormat: () => this.editor.chain().focus().clearNodes().unsetAllMarks().run(),
+            textColor: () => {
+                if (value) {
+                    this.editor.chain().focus().setColor(value).run();
+                }
+            },
+            backgroundColor: () => {
+                if (value) {
+                    this.editor.chain().focus().setHighlight({ color: value }).run();
+                } else {
+                    this.editor.chain().focus().unsetHighlight().run();
+                }
+            },
+        };
+
+        if (commands[command]) {
+            commands[command]();
+        }
+    }
+
+    // Update toolbar button states based on current selection
+    updateToolbarState() {
+        const container = document.getElementById(this.containerId);
+        if (!container) return;
+
+        const buttons = container.querySelectorAll('button[data-command]');
+        buttons.forEach(button => {
+            const command = button.dataset.command;
+            let isActive = false;
+
+            switch (command) {
+                case 'bold': isActive = this.editor.isActive('bold'); break;
+                case 'italic': isActive = this.editor.isActive('italic'); break;
+                case 'underline': isActive = this.editor.isActive('underline'); break;
+                case 'strikethrough': isActive = this.editor.isActive('strike'); break;
+                case 'alignLeft': isActive = this.editor.isActive({ textAlign: 'left' }); break;
+                case 'alignCenter': isActive = this.editor.isActive({ textAlign: 'center' }); break;
+                case 'alignRight': isActive = this.editor.isActive({ textAlign: 'right' }); break;
+                case 'alignJustify': isActive = this.editor.isActive({ textAlign: 'justify' }); break;
+                case 'bulletList': isActive = this.editor.isActive('bulletList'); break;
+                case 'orderedList': isActive = this.editor.isActive('orderedList'); break;
+                case 'blockquote': isActive = this.editor.isActive('blockquote'); break;
+                case 'code': isActive = this.editor.isActive('code'); break;
+                case 'link': isActive = this.editor.isActive('link'); break;
+                case 'undo': isActive = this.editor.can().chain().focus().undo().run(); break;
+                case 'redo': isActive = this.editor.can().chain().focus().redo().run(); break;
+            }
+
+            button.classList.toggle('is-active', isActive);
+        });
+
+        const colorPicker = container.querySelectorAll('.tiptap-color-picker');
+        colorPicker.forEach(picker => {
+            const pickerInput = picker.querySelector('input[data-command]');
+            const command = pickerInput.dataset.command;
+            let isActive = false;
+            const selectedTextColor = this.editor.getAttributes('textStyle').color;
+            const selectedHighlightColor = this.editor.getAttributes('highlight').color;
+
+            const normalizeToHex = (color) => {
+                if (!!color && color.startsWith("rgb")) {
+                    const [r, g, b] = color.match(/\d+/g).map(Number);
+                    return "#" + [r, g, b].map(x => x.toString(16).padStart(2, "0")).join("");
+                }
+                return color;
+            }
+
+            switch (command) {
+                case 'textColor': {
+                    if (selectedTextColor) isActive = this.editor.isActive('textStyle', { color: selectedTextColor });
+                    pickerInput.value = normalizeToHex(selectedTextColor) || '#000000';
+                } break;
+                case 'backgroundColor': {
+                    if (selectedHighlightColor) isActive = this.editor.isActive('highlight');
+                    pickerInput.value = normalizeToHex(selectedHighlightColor) || '#000000';
+                } break;
+            }
+
+            picker.classList.toggle('is-active', isActive);
+
+        });
+
+        // Update dropdowns
+        const fontFamilyDropdown = container.querySelector('.tiptap-dropdown .rte-dropdown-button[data-command="fontFamily"]')?.closest('.tiptap-dropdown').dropdownInstance;
+        if (fontFamilyDropdown) {
+            const currentFontFamily = this.editor.getAttributes('textStyle').fontFamily || '';
+            const currentFormatedFontFamily = currentFontFamily.split(/\s*,\s*/).map(v => v.toLowerCase().trim().replaceAll(/['"]/g, "")).join(",");
+            fontFamilyDropdown.updateValue(currentFormatedFontFamily, currentFontFamily);
+        }
+
+        const fontSizeDropdown = container.querySelector('.tiptap-dropdown .rte-dropdown-button[data-command="fontSize"]')?.closest('.tiptap-dropdown').dropdownInstance;
+        if (fontSizeDropdown) {
+            const currentFontSize = this.editor.getAttributes('textStyle').fontSize || '';
+            fontSizeDropdown.updateValue(currentFontSize);
+        }
+
+        const headingDropdown = container.querySelector('.tiptap-dropdown .rte-dropdown-button[data-command="heading"]')?.closest('.tiptap-dropdown').dropdownInstance;
+        if (headingDropdown) {
+            let headingValue = '';
+            for (let i = 1; i <= 6; i++) {
+                if (this.editor.isActive('heading', { level: i })) {
+                    headingValue = i.toString();
+                    break;
+                }
+            }
+            if (!headingValue) headingValue = 'paragraph';
+            headingDropdown.updateValue(headingValue);
+        }
+
+        const tableDropdown = container.querySelector('.tiptap-dropdown .rte-dropdown-button[data-command="table"]')?.closest('.tiptap-dropdown').dropdownInstance;
+        if (tableDropdown) {
+            const isInTable = this.editor.isActive('table');
+            tableDropdown.button.classList.toggle('is-active', isInTable);
+            tableDropdown.textElement.textContent = 'Table';
+            //// Update dropdown text based on context
+            //if (isInTable) {
+            //    tableDropdown.textElement.textContent = 'Table Tools';
+            //} else {
+            //    tableDropdown.textElement.textContent = 'Table';
+            //}
+        }
+    }
+
+    // Public API methods
+    getHTML() {
+        return this.editor ? this.editor.getHTML() : '';
+    }
+
+    getText() {
+        return this.editor ? this.editor.getText() : '';
+    }
+
+    getJSON() {
+        return this.editor ? this.editor.getJSON() : null;
+    }
+
+    setContent(content) {
+        if (this.editor) {
+            this.editor.commands.setContent(content);
+        }
+    }
+
+    insertContent(content) {
+        if (this.editor) {
+            this.editor.commands.insertContent(content);
+        }
+    }
+
+    updateCounter() {
+        const counterElement = this.editor.options?.element?.parentElement?.querySelector?.('.tiptap-counter');
+        const limit = this.options.maxLength || 0;
+        if (!counterElement || !(limit > 0)) return;
+        const charactersCount = this.editor.storage.characterCount?.characters() || this.editor.getText().length;
+        const wordsCount = this.editor.storage.characterCount?.words() || this.editor.getText().trim().split(/\s+/).filter(Boolean).length;
+
+        const percentage = Math.min(100, Math.round((100 / limit) * charactersCount));
+        const warning = charactersCount >= limit;
+
+        const textColor = warning ? '#dc3545' : '#6c757d'; // red / gray
+        const svgColor = warning ? '#dc3545' : '#6f42c1'; // red / purple
+
+        counterElement.innerHTML = `
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: 0.25rem;
+              margin: 0.25rem;
+              font-size: 0.75rem;
+              color: ${textColor};
+              justify-content: flex-end;
+            ">
+              <svg height="20" width="20" viewBox="0 0 20 20" style="color:${svgColor};">
+                <circle r="10" cx="10" cy="10" fill="#e9ecef" />
+                <circle
+                  r="5"
+                  cx="10"
+                  cy="10"
+                  fill="transparent"
+                  stroke="currentColor"
+                  stroke-width="10"
+                  stroke-dasharray="calc(${percentage} * 31.4 / 100) 31.4"
+                  transform="rotate(-90) translate(-20)"
+                />
+                <circle r="6" cx="10" cy="10" fill="white" />
+              </svg>
+              <span>${charactersCount}${limit ? ` / ${limit} characters` : ' characters'}</span>
+              <span>| ${wordsCount} words</span>
+            </div>
+      `;
+    }
+
+    focus() {
+        if (this.editor) {
+            this.editor.commands.focus();
+        }
+    }
+
+    focusAtEnd() {
+        if (this.editor) {
+            this.focus();
+            this.editor.commands.setTextSelection(this.editor.state.doc.content.size);
+        }
+    }
+
+    blur() {
+        if (this.editor) {
+            this.editor.commands.blur();
+        }
+    }
+
+    disable() {
+        if (this.editor) {
+            this.editor.setEditable(false, false);
+            const toolbarContainer = this.editor.options?.element?.parentElement?.querySelector?.('.tiptap-toolbar');
+            if (toolbarContainer) toolbarContainer.querySelectorAll('button, input').forEach(el => {
+                el.disabled = true;
+            });
+            this.options.disable = true;
+        }
+    }
+
+    enable() {
+        if (this.editor) {
+            this.editor.setEditable(true, true);
+            const toolbarContainer = this.editor.options?.element?.parentElement?.querySelector?.('.tiptap-toolbar');
+            if (toolbarContainer) toolbarContainer.querySelectorAll('button, input').forEach(el => {
+                el.disabled = false;
+            });
+            this.options.disable = false;
+        }
+    }
+
+    clear() {
+        if (this.editor) {
+            this.editor.commands.clearContent();
+        }
+    }
+
+    destroy() {
+        if (this.editor) {
+            this.editor.destroy();
+            this.editor = null;
+        }
+    }
+
+    get charactersCount() {
+        return this.editor.storage.characterCount?.characters() || this.editor.getText().length;
+    }
+
+    get isOverCharacterLimit() {
+        const limit = this.options.maxLength || 0;
+        return !isNaN(limit) && this.charactersCount > Number(limit);
+    }
+
+    get isEmpty() {
+        return this.charactersCount < 1;
+    }
+
+    //Global store for all active editor instances
+    static instances = {}
+
+    // Static method to create editor instance
+    static async create(containerId, options = {}) {
+        const editorInstance = new RichTextEditor();
+        const instance = await editorInstance.init(containerId, options);
+
+        // store globally with containerId as key
+        if (instance) RichTextEditor.instances[containerId] = instance;
+
+        return instance;
+    }
+
+    static preview(htmlString, rtePreviewElement) {
+        let previewHtml = ``;
+        if (htmlString && rtePreviewElement) {
+            // decode HTML entities
+            const parser = new DOMParser();
+            const decoded = parser.parseFromString(htmlString, "text/html").documentElement.textContent;
+            const classes = Array.from(rtePreviewElement?.classList ?? []).filter(c => c != "d-none").join(" ");
+            previewHtml = `<div class="ProseMirror ${classes}">${decoded}</div>`;
+            rtePreviewElement.outerHTML = previewHtml;
+        }
+        return previewHtml;
+    }
+
+    static reloadPreviewForPartialView() {
+        document.querySelectorAll("div[data-rte-preview]").forEach((rtePreview) => {
+            RichTextEditor.preview(rtePreview.innerHTML, rtePreview);
+        });
+    }
+}
+
+// Auto-initialize
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll("textarea[data-rte-id]").forEach((rteTextarea) => {
+        const content = rteTextarea.value;
+        const rteId = rteTextarea.getAttribute("data-rte-id");
+        const height = rteTextarea.getAttribute("data-rte-height") || 150;
+        const styles = rteTextarea.getAttribute("data-rte-style") || "";
+        const maxLength = rteTextarea.getAttribute("maxlength") || null;
+        let disable = rteTextarea.getAttribute("data-rte-disable") || false;
+
+        if (typeof disable === "string") disable = disable === "true" ? true : false; 
+
+        // Create container div right after rteTextarea
+        const container = document.createElement("div");
+        container.id = rteId;
+        rteTextarea.insertAdjacentElement("afterend", container);
+
+        RichTextEditor.create(container.id, {
+            disable, height, styles, maxLength, content,
+            onUpdate: (html) => {
+                rteTextarea.value = html; // keep textarea synced
+            }
+        }).then(instance => {
+            // Add click-to-focus
+            const editorArea = container.querySelector(".tiptap-editor");
+
+            editorArea.addEventListener("click", (e) => {
+                // 1. If editor is disabled, ignore
+                if (instance.options.disable) return;
+
+                // 2. After a short delay, check if rte isFocused
+                setTimeout(() => {
+                    if (!instance.editor.isFocused) instance.focusAtEnd();
+                }, 5);
+            });
+        });
+    });
+    document.querySelectorAll("div[data-rte-preview]").forEach((rtePreview) => {
+        RichTextEditor.preview(rtePreview.innerHTML, rtePreview);
+    });
+});
