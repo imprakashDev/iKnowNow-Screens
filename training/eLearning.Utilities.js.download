@@ -1,0 +1,876 @@
+﻿
+Date.prototype.getUtcTime = function () {
+    return new Date(
+        this.getUTCFullYear(),
+        this.getUTCMonth(),
+        this.getUTCDate(),
+        this.getUTCHours(),
+        this.getUTCMinutes(),
+        this.getUTCSeconds()
+    ).getTime();
+};
+
+Date.prototype.getUtcTimeUpToMinutes = function () {
+    return new Date(
+        this.getUTCFullYear(),
+        this.getUTCMonth(),
+        this.getUTCDate(),
+        this.getUTCHours(),
+        this.getUTCMinutes()
+    ).getTime();
+};
+
+Date.prototype.currentUtcTimeReachedUpToMinutes = function () {
+    var thisDateUtcTime = this.getTime();
+    var currentUtcTime = new Date().getUtcTimeUpToMinutes();
+
+    return (currentUtcTime >= thisDateUtcTime);
+};
+
+jQuery.fn.extend({
+    toggleSlowly: function (expression) {
+        if (expression === true)
+            $(this).show("slow");
+        else
+            $(this).hide("slow");
+    }
+});
+
+var utilities = {
+    constants: {
+        dateFormatForJQueryUiDatePicker: "dd-M-yy", // To display like: 01-Jan-2020
+        dateFormatForPlaceholder: "dd-mmm-yyyy",
+
+        totalUploadFileSizeMaxDefault: 5242880, // 5MB
+
+        videoContentType: "vdo",
+        audioContentType: "ado",
+        documentContentType: "doc",
+        animationContentType: "ht5",
+        linkContentType: ["lnk", "mlnk"],
+        allowedVideoExtensions : ["mp4", "wmv"],
+        allowedAudioExtensions :["mp3", "amr"],
+        allowedDocExtensions:["pdf","doc","docx",".ppt",".pptx"],
+        allowedRestHT5Extensions:["js", "css", "png", "jpg", "html", "htm"],
+        allowedMainHT5Extensions: ["html", "htm"],
+        contentOutlookCalendarType:"ics"
+    },
+    regexes: {
+        regexForPositiveInteger: new RegExp(/^\d+$/),
+        regexForUploadableImgFileExtensions: new RegExp("\.(bmp|gif|ico|jpeg|jpg|png|tif|tiff)$", "i")
+    },
+
+	generateErrorMsgSection: function (errorMsg) {
+		if (!$.trim(errorMsg || "")) return "";
+
+		var errorMsgSection =
+			"<div class='alert alert-danger alert-dismissible font-weight-bold mb-1' role='alert'>" +
+            "<button type='button' class='close' data-bs-dismiss='alert'>&times;</button>" +
+            "<i class='fa fa-bell-o fa-border' aria-hidden='true' style='font-color:#990000;font-weight:bolder;font-size:16px;'></i>&nbsp;&nbsp;&nbsp;" +
+				$.trim(errorMsg) +
+			"</div>";
+
+		return errorMsgSection;
+    },
+    generateInfoMsgSection: function (infoMsg) {
+        if (!$.trim(infoMsg || "")) return "";
+
+        var infoMsgSection =
+            "<div class='alert alert-info alert-dismissible font-weight-bold mb-1' role='alert'>" +
+            "<i class='fa fa-info fa-border' aria-hidden='true' style='font-color:#00ffff;font-weight:bolder;font-size:16px;'></i>&nbsp;&nbsp;&nbsp;" +
+            "<button type='button' class='close' data-bs-dismiss='alert'>&times;</button>" +
+                $.trim(infoMsg) +
+            "</div>";
+
+        return infoMsgSection;
+    },
+    generateSuccessMsgSection: function (sucessMsg) {
+        if (!$.trim(sucessMsg || "")) return "";
+
+        var sucessMsgSection =
+            "<div class='alert alert-success alert-dismissible font-weight-bold mb-1' role='alert'>" +
+            "<button type='button' class='close' data-bs-dismiss='alert'>&times;</button>" +
+            "<i class='fa fa-paper-plane-o fa-border' aria-hidden='true' style='font-color:#29a329;font-weight:bolder;font-size:16px;'></i>&nbsp;&nbsp;&nbsp;" +
+                $.trim(sucessMsg) +
+            "</div>";
+
+        return sucessMsgSection;
+    },
+
+    generateGuid: function () {
+        function s4() {
+            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+        }
+
+        return (s4() + s4() + "-" + s4() + "-4" + s4().substr(0, 3) + "-" + s4() + "-" + s4() + s4() + s4()).toLowerCase();
+    },
+
+    // region: Browser
+    isBrowserIe: function () {
+        // Check the userAgent property of the window.navigator object
+        var ua = window.navigator.userAgent;
+
+        // IE 10 or older
+        var msie = ua.indexOf("MSIE ");
+
+        // IE 11
+        var trident = ua.indexOf("Trident/");
+
+        return (msie >= 0 || trident >= 0 || (!!document.documentMode == true));
+    },
+
+    // Microsoft Edge, not Chromium Edge
+    isBrowserEdge: function () {
+        // Check the userAgent property of the window.navigator object
+        var ua = window.navigator.userAgent;
+
+        // Microsoft Edge, not Chromium Edge
+        var edge = ua.indexOf("edge");
+
+        return (edge >= 0);
+    },
+
+    isUnwantedBrowser: function () {
+        return (this.isBrowserIe() || this.isBrowserEdge());
+    },
+    // endregion: Browser
+
+    // region: Buttons
+    prepareModalFooterCloseBtn: function () {
+        //$(".modal .modal-footer .btn-close").addClass("Red-Botton-Scheme Button-Hover");
+        $(".modal .modal-footer .btn-close").addClass("Red-Botton-Scheme");
+        $(".modal .modal-footer .btn-close").prepend('<i class="fa fa-times mr-2" aria-hidden="true"></i>');
+    },
+    prepareModalFooterSaveBtn: function () {
+        //$(".modal .modal-footer .btn-save").addClass("Dark-Botton-Scheme Button-Hover");
+        $(".modal .modal-footer .btn-save").addClass("Dark-Botton-Scheme");
+        $(".modal .modal-footer .btn-save").prepend('<i class="fa fa-save mr-2" aria-hidden="true"></i>');
+    },
+    prepareModalFooterUploadBtn: function () {
+        //$(".modal .modal-footer .btn-upload").addClass("Green-Botton-Scheme Button-Hover");
+        $(".modal .modal-footer .btn-upload").addClass("Green-Botton-Scheme");
+        $(".modal .modal-footer .btn-upload").prepend('<i class="fa fa-upload mr-2" aria-hidden="true"></i>');
+    },
+    // endregion: Buttons
+
+    // region: Date Input Elements
+    clearDateInputElements: function ($dateInputElements) {
+
+        if (!$dateInputElements)
+            $dateInputElements = $(".date-input");
+
+        $dateInputElements.val("");
+    },
+
+    prepareDateInputElements: function ($dateInputElements) {
+
+        if (!$dateInputElements)
+            $dateInputElements = $(".date-input");
+
+        $dateInputElements.parent().removeClass("d-flex").addClass("d-flex");
+
+        $dateInputElements
+            .attr("placeholder", utilities.constants.dateFormatForPlaceholder)
+            .attr("readonly", "true")
+            .css("background-color", "inherit")
+            .datepicker({
+                dateFormat: utilities.constants.dateFormatForJQueryUiDatePicker,
+
+                showOn: "both",
+                buttonText: "",
+
+                yearRange: "2000:2099",
+                changeMonth: true,
+                changeYear: true,
+
+                showButtonPanel: true,
+
+                closeText: "Clear",
+                onClose: function () {
+                    // If "Clear" gets clicked, then really clear it
+                    if ($(window.event.srcElement).hasClass('ui-datepicker-close')) {
+                        $(this).val("");
+                    }
+                }
+            });
+
+        $(".ui-datepicker-trigger")
+            .append("<i class='fa fa-calendar' aria-hidden='true'></i>")
+            .removeClass("btn btn-sm")
+            .addClass("btn btn-sm")
+            .css("height", "fit-content");
+    },
+    // endregion: Date Input Elements
+
+    // region: Date Time
+    getHrMinSecStringFromSeconds: function (seconds) {
+        seconds = Number(seconds);
+        if (seconds < 0) throw new Error("Argument 'seconds' had negative value.");
+
+        var h = Math.floor(seconds / (60 * 60));
+        var m = Math.floor(seconds % (60 * 60) / 60);
+        var s = Math.floor(seconds % (60 * 60) % 60);
+
+        //return h + "h " + m + "m " + s + "s";
+
+        if (h < 10) { h = "0" + h; }
+        if (m < 10) { m = "0" + m; }
+        if (s < 10) { s = "0" + s; }
+
+        return h + ":" + m + ":" + s;
+    },
+    getMinSecStringFromSeconds: function (seconds) {
+        seconds = Number(seconds);
+        if (seconds < 0) throw new Error("Argument 'seconds' had negative value.");
+
+        var m = Math.floor(seconds / 60);
+        var s = Math.floor(seconds % 60);
+
+        if (m < 10) { m = "0" + m; }
+        if (s < 10) { s = "0" + s; }
+
+        return m + "m " + s + "s";
+    },
+    getDaysHrMinSecStringFromSeconds: function (seconds) {
+        seconds = Number(seconds);
+        if (seconds < 0) throw new Error("Argument 'seconds' had negative value.");
+
+        var d = Math.floor(seconds / (60 * 60 * 24));
+        var h = Math.floor((seconds / (60 * 60)) % 24);
+        var m = Math.floor(seconds % (60 * 60) / 60);
+        var s = Math.floor(seconds % (60 * 60) % 60);
+
+        if (d == 0) { d = ""; } else {d = d + ":"}
+        if (h < 10) { h = "0" + h; }
+        if (m < 10) { m = "0" + m; }
+        if (s < 10) { s = "0" + s; }
+
+        return  d + h + ":" + m + ":" + s;
+    },
+    // endregion: Date Time
+
+    // region: Text Input Element
+    //whetherTextInputElementHasTag: function ($textInputElement) {
+    //    //var regExp = new RegExp(/<(.|\n)*?>/g);
+    //    var regExp = new RegExp(/<(.|\n)*?/g);
+    //    //var regExp = new RegExp(/[<|>|(&lt;)|(&gt;)]/g);
+    //    return (regExp.test($textInputElement.val()));
+    //},
+    // endregion: Text Input Element
+
+    // region: Footer
+    //repositionFooter: function () {
+    //    $("footer").toggleClass("fixed-bottom", ($("body").height() <= window.innerHeight));
+    //},
+    // endregion: Footer
+
+    getEditorInnerText: function (textareaSelector) {
+        var innerText = $.trim($(textareaSelector).next(".Editor-container").find(".Editor-editor").text() || "");
+        return innerText;
+    },
+
+    getInputFileSize: function ($inputFileElement) {
+        if (!$inputFileElement || ($inputFileElement.length === 0)) return 0;
+
+        var inputFileSize = 0;
+
+        for (var i = 0; i < $inputFileElement[0].files.length; i++) {
+            inputFileSize += $inputFileElement[0].files[i].size;
+        }
+
+        return inputFileSize;
+    },
+
+    getTotalInputFileSize: function () {
+        var totalInputFileSize = 0;
+
+        $("input:file").each(function () {
+            for (var i = 0; i < this.files.length; i++) {
+                totalInputFileSize += this.files[i].size;
+            }
+        });
+
+        return totalInputFileSize;
+    },
+
+    getNonEmptyChoiceTextElementCount: function ($choiceTextElements) {
+        if (!$choiceTextElements || ($choiceTextElements.length === 0)) return 0;
+
+        var nonEmptyChoiceTextElementCount = $choiceTextElements
+            .filter(function () {
+                return ($.trim($(this).val() || ""));
+            })
+            .length;
+
+        return nonEmptyChoiceTextElementCount;
+    },
+
+    isPositiveInteger: function (valueAsString) {
+        return (utilities.regexes.regexForPositiveInteger.test($.trim(valueAsString || "")));
+    },
+    isPositiveIntegerAndFallsWithinRange: function (valueAsString, minValueAsString, maxValueAsString) {
+        var isPositiveInteger = (utilities.isPositiveInteger(valueAsString));
+        if (!isPositiveInteger) return false;
+
+        isPositiveInteger = (utilities.isPositiveInteger(minValueAsString));
+        if (!isPositiveInteger) return false;
+
+        isPositiveInteger = (utilities.isPositiveInteger(maxValueAsString));
+        if (!isPositiveInteger) return false;
+
+        var valueAsInteger = parseInt($.trim(valueAsString || ""), 10);
+        var minValueAsInteger = parseInt($.trim(minValueAsString || ""), 10);
+        var maxValueAsInteger = parseInt($.trim(maxValueAsString || ""), 10);
+
+        return ((valueAsInteger >= minValueAsInteger) && (valueAsInteger <= maxValueAsInteger));
+    },
+
+    preventContextMenu: function () {
+        $(document).on("contextmenu", function (e) {
+            e.preventDefault();
+        });
+    },
+
+    preventCtrlShiftI: function () {
+        $(document).keydown(function (event) {
+            if (event.ctrlKey && event.shiftKey && (event.keyCode === 73)) return false;
+        });
+    },
+
+    preventF5: function () {
+        $(document).on("keydown", function (event) {
+            if (event.keyCode === 116) return false;
+        });
+    },
+
+    preventF12: function () {
+        $(document).keydown(function (event) {
+            if (event.keyCode === 123) return false;
+        });
+    },
+
+    restrictInputUptoMaxLength: function (element) {
+        if (!element) return;
+
+        var $element = $(element);
+        var value = $.trim($element.val() || "");
+        var maxLength = $.trim($element.attr("maxlength") || "");
+
+        if (!$element || ($element.length === 0) || !value || !maxLength) return;
+
+        if (value.length > maxLength)
+            $element.val(value.slice(0, maxLength));
+    },
+
+    // region: Html Editors
+	setEditors: function () {
+        var editorSettings = {
+            'fonteffects': false,
+            'ol': true,
+            'ul': true,
+            'undo': false,
+            'redo': false,
+			'l_align': true,
+			'r_align': true,
+			'c_align': true,
+			'justify': true,
+			'insert_link': true,
+			'unlink': true,
+			'insert_img': false,
+			'hr_line': false,
+            'block_quote': false,
+            'source': false,
+			'strikeout': false,
+			'indent': false,
+			'outdent': false,
+			//'fonts': false,
+			//'styles': false,
+            'print': false,
+            'rm_format': true,
+            'status_bar': false,
+            //'font_size': false,
+			'splchars': false,
+			'insert_table': false,
+			'select_all': false,
+            'togglescreen': false,
+            'fonts': {
+                "MS Gothic": "ms gothic,sans-serif",
+                "Yu Gothic": "yu gothic,sans-serif",
+                "Yu Gothic Light": "yu gothic light,sans-serif",
+                "Sans serif": "arial,helvetica,sans-serif",
+		        "Serif"	 	 : "times new roman,serif",
+		        "Wide"	 	 : "arial black,sans-serif",
+		        "Narrow"	 	 : "arial narrow,sans-serif",
+		        "Comic Sans MS": "comic sans ms,sans-serif",
+		        "Courier New"  : "courier new,monospace",
+		        "Garamond"	 : "garamond,serif",
+		        "Georgia"	 	 : "georgia,serif",
+		        "Tahoma" 		 : "tahoma,sans-serif",
+		        "Trebuchet MS" : "trebuchet ms,sans-serif",
+                "Verdana": "verdana,sans-serif"
+            }
+        };
+        var previewEditorSettings = {
+            texteffects: false,
+            aligneffects: false,
+            textformats: false,
+            fonteffects: false,
+            actions: false,
+            insertoptions: false,
+            extraeffects: false,
+            advancedoptions: false,
+            screeneffects: false,
+            bold: false,
+            italics: false,
+            underline: false,
+            ol: false,
+            ul: false,
+            undo: false,
+            redo: false,
+            l_align: false,
+            r_align: false,
+            c_align: false,
+            justify: false,
+            insert_link: false,
+            unlink: false,
+            insert_img: false,
+            hr_line: false,
+            block_quote: false,
+            source: false,
+            strikeout: false,
+            indent: false,
+            outdent: false,
+            fonts: false,
+            styles: false,
+            print: false,
+            rm_format: false,
+            status_bar: false,
+            font_size: false,
+            color: false,
+            splchars: false,
+            insert_table: false,
+            select_all: false,
+            togglescreen: false,
+        };
+
+        var editorSettingsCalenderInvitation = {
+            'fonteffects': false,
+            'ol': true,
+            'ul': true,
+            'undo': false,
+            'redo': false,
+            'l_align': true,
+            'r_align': true,
+            'c_align': true,
+            'justify': true,
+            'insert_link': true,
+            'unlink': true,
+            'insert_img': false,
+            'hr_line': false,
+            'block_quote': false,
+            'source': false,
+            'strikeout': false,
+            'indent': false,
+            'outdent': false,
+            //'fonts': false,
+            //'styles': false,
+            'print': false,
+            'rm_format': true,
+            'status_bar': false,
+            //'font_size': false,
+            'splchars': false,
+            'insert_table': false,
+            'select_all': false,
+            'togglescreen': false,
+            'color': false,
+            'fonts': {
+                "MS Gothic": "ms gothic,sans-serif",
+                "Yu Gothic": "yu gothic,sans-serif",
+                "Yu Gothic Light": "yu gothic light,sans-serif",
+                "Sans serif": "arial,helvetica,sans-serif",
+                "Serif": "times new roman,serif",
+                "Wide": "arial black,sans-serif",
+                "Narrow": "arial narrow,sans-serif",
+                "Comic Sans MS": "comic sans ms,sans-serif",
+                "Courier New": "courier new,monospace",
+                "Garamond": "garamond,serif",
+                "Georgia": "georgia,serif",
+                "Tahoma": "tahoma,sans-serif",
+                "Trebuchet MS": "trebuchet ms,sans-serif",
+                "Verdana": "verdana,sans-serif"
+            }
+        };
+
+        var editorSettingsRichTextDescription = {
+            'fonteffects': false,
+            'ol': true,
+            'ul': true,
+            'undo': false,
+            'redo': false,
+            'l_align': true,
+            'r_align': true,
+            'c_align': true,
+            'justify': true,
+            'insert_link': true,
+            'unlink': true,
+            'insert_img': false,
+            'hr_line': false,
+            'block_quote': false,
+            'source': false,
+            'strikeout': false,
+            'indent': false,
+            'outdent': false,
+            //'fonts': true,
+            //'styles': false,
+            'print': false,
+            'rm_format': true,
+            'status_bar': false,
+            //'font_size': false,
+            'splchars': false,
+            'insert_table': false,
+            'select_all': false,
+            'togglescreen': false,
+            //'color': false,
+            'fonts': {
+                "MS Gothic": "ms gothic,sans-serif",
+                "Yu Gothic": "yu gothic,sans-serif",
+                "Yu Gothic Light": "yu gothic light,sans-serif",
+                "Sans serif": "arial,helvetica,sans-serif",
+                "Serif": "times new roman,serif",
+                "Wide": "arial black,sans-serif",
+                "Narrow": "arial narrow,sans-serif",
+                "Comic Sans MS": "comic sans ms,sans-serif",
+                "Courier New": "courier new,monospace",
+                "Garamond": "garamond,serif",
+                "Georgia": "georgia,serif",
+                "Tahoma": "tahoma,sans-serif",
+                "Trebuchet MS": "trebuchet ms,sans-serif",
+                "Verdana": "verdana,sans-serif"
+            }
+        };
+
+        var editorSettingsRichTextSurveyQuestion = {
+            'fonteffects': false,
+            'ol': true,
+            'ul': true,
+            'undo': false,
+            'redo': false,
+            'l_align': true,
+            'r_align': true,
+            'c_align': true,
+            'justify': true,
+            'insert_link': true,
+            'unlink': true,
+            'insert_img': false,
+            'hr_line': false,
+            'block_quote': false,
+            'source': false,
+            'strikeout': false,
+            'indent': false,
+            'outdent': false,
+            //'fonts': true,
+            //'styles': false,
+            'print': false,
+            'rm_format': true,
+            'status_bar': false,
+            //'font_size': false,
+            'splchars': false,
+            'insert_table': false,
+            'select_all': false,
+            'togglescreen': false,
+            //'color': false,
+            'fonts': {
+                "MS Gothic": "ms gothic,sans-serif",
+                "Yu Gothic": "yu gothic,sans-serif",
+                "Yu Gothic Light": "yu gothic light,sans-serif",
+                "Sans serif": "arial,helvetica,sans-serif",
+                "Serif": "times new roman,serif",
+                "Wide": "arial black,sans-serif",
+                "Narrow": "arial narrow,sans-serif",
+                "Comic Sans MS": "comic sans ms,sans-serif",
+                "Courier New": "courier new,monospace",
+                "Garamond": "garamond,serif",
+                "Georgia": "georgia,serif",
+                "Tahoma": "tahoma,sans-serif",
+                "Trebuchet MS": "trebuchet ms,sans-serif",
+                "Verdana": "verdana,sans-serif"
+            }
+        };
+
+        if ($(".question-html").length > 0)
+            $(".question-html").Editor(editorSettings);
+        
+        if ($(".ans-explanation-html").length > 0)
+            $(".ans-explanation-html").Editor(editorSettings);
+
+        if ($(".question-preview-html").length > 0)
+            $(".question-preview-html").Editor(previewEditorSettings);
+
+        if ($(".ans-preview-html").length > 0)
+            $(".ans-preview-html").Editor(previewEditorSettings);
+
+        if ($(".InvitationDescription-html").length > 0)
+            $(".InvitationDescription-html").Editor(editorSettingsCalenderInvitation);
+
+        if ($(".InvitationDescriptionInJp-html").length > 0)
+            $(".InvitationDescriptionInJp-html").Editor(editorSettingsCalenderInvitation);
+
+        if ($(".RichTextDescription-html").length > 0)
+            $(".RichTextDescription-html").Editor(editorSettingsRichTextDescription);
+
+        if ($(".RichTextDescriptionInJp-html").length > 0)
+            $(".RichTextDescriptionInJp-html").Editor(editorSettingsRichTextDescription);
+
+        if ($(".questionEN-html").length > 0)
+            $(".questionEN-html").Editor(editorSettingsRichTextSurveyQuestion);
+
+        if ($(".questionJP-html").length > 0)
+            $(".questionJP-html").Editor(editorSettingsRichTextSurveyQuestion);
+
+        if ($(".NotificationEmailBody-html").length > 0)
+            $(".NotificationEmailBody-html").Editor(editorSettingsRichTextSurveyQuestion);
+
+        $(".question-html, .ans-explanation-html, .InvitationDescription-html, .InvitationDescriptionInJp-html, .RichTextDescription-html, .RichTextDescriptionInJp-html, .questionEN-html, .questionJP-html, .NotificationEmailBody-html").next(".Editor-container").addClass("mt-0").find(".Editor-editor").height("200px").next(".line-control-status-bar").hide();
+
+        $(".question-preview-html, .ans-preview-html").next(".Editor-container").find(".Editor-editor").attr("contenteditable", false).height("auto").css({ "border": "none","padding": 0}).next(".line-control-status-bar").hide().prev(".Editor-editor").prev(".line-control-menu-bar").hide();
+        
+        //$(".course-test-question-html").next(".Editor-container").find(".Editor-editor").html($(".course-test-question-html").text());
+
+        //$(".course-test-question-html").next(".Editor-container").find(".Editor-editor").on("DOMSubtreeModified", function () {
+        //    $(".course-test-question-html").text($(this).html());
+        //});
+
+        $(".question-html").next(".Editor-container").find(".Editor-editor").html($(".question-html").text()).on("DOMSubtreeModified", function () {
+            $(".question-html").text($(this).html());
+        });
+
+        $(".ans-explanation-html").next(".Editor-container").find(".Editor-editor").html($(".ans-explanation-html").text()).on("DOMSubtreeModified", function () {
+            $(".ans-explanation-html").text($(this).html());
+        });
+
+        $(".InvitationDescription-html").next(".Editor-container").find(".Editor-editor").height("80px").html($(".InvitationDescription-html").text()).on("DOMSubtreeModified", function () {
+            $(".InvitationDescription-html").text($(this).html());
+        });
+
+        $(".InvitationDescriptionInJp-html").next(".Editor-container").find(".Editor-editor").height("80px").html($(".InvitationDescriptionInJp-html").text()).on("DOMSubtreeModified", function () {
+            $(".InvitationDescriptionInJp-html").text($(this).html());
+        });
+
+        $(".RichTextDescription-html").next(".Editor-container").find(".Editor-editor").height("80px").html($(".RichTextDescription-html").text()).on("DOMSubtreeModified", function () {
+            $(".RichTextDescription-html").text($(this).html());
+        });
+
+        $(".RichTextDescriptionInJp-html").next(".Editor-container").find(".Editor-editor").height("80px").html($(".RichTextDescriptionInJp-html").text()).on("DOMSubtreeModified", function () {
+            $(".RichTextDescriptionInJp-html").text($(this).html());
+        });
+
+        $(".questionEN-html").next(".Editor-container").find(".Editor-editor").height("80px").html($(".questionEN-html").text()).on("DOMSubtreeModified", function () {
+            $(".questionEN-html").text($(this).html());
+        });
+
+        $(".questionJP-html").next(".Editor-container").find(".Editor-editor").height("80px").html($(".questionJP-html").text()).on("DOMSubtreeModified", function () {
+            $(".questionJP-html").text($(this).html());
+        });
+        
+        $(".NotificationEmailBody-html").next(".Editor-container").find(".Editor-editor").height("80px").html($(".NotificationEmailBody-html").text()).on("DOMSubtreeModified", function () {
+            $(".NotificationEmailBody-html").text($(this).html());
+        });
+
+        $(".question-preview-html").next(".Editor-container").find(".Editor-editor").html($(".question-preview-html").text()).on("DOMSubtreeModified", function () {
+            $(".question-preview-html").text($(this).html());
+        }).find("a").each(function () {
+            if (!($(this).attr("style") && $(this).attr("style").includes("color"))) $(this).css({ color: "#007bff" });
+        });
+
+        $(".ans-preview-html").next(".Editor-container").find(".Editor-editor").html($(".ans-preview-html").text()).on("DOMSubtreeModified", function () {
+            $(".ans-preview-html").text($(this).html());
+        }).find("a").each(function () {
+            if (!($(this).attr("style") && $(this).attr("style").includes("color"))) $(this).css({ color: "#007bff" });
+            });
+
+        
+
+        //Remove context-menu on preview mode
+        $(".question-preview-html, .ans-preview-html").next(".Editor-container").find(".Editor-editor").bind("contextmenu", function (e) {
+            if ($('#context-menu').length) $('#context-menu').remove();
+        });
+
+        this.setFontFamilyFromDataAttr();
+    },
+
+    setFontFamilyToDataAttr: function () {
+        $(".question-html, .ans-explanation-html, .InvitationDescription-html, .InvitationDescriptionInJp-html, .RichTextDescription-html, .RichTextDescriptionInJp-html, .questionEN-html, .questionJP-html, .NotificationEmailBody-html").next(".Editor-container").find(".Editor-editor [style]").each(function (i, ev) {
+            let styleAttrSingleQuote = $(ev).attr("style");
+      
+            if (styleAttrSingleQuote.includes("font-family")) {
+                styleAttrSingleQuote.split(";").forEach(function (val) {
+                    if (val.includes("font-family")) {
+                        let elFontFamily = val.split(":")[1].trim().replace(/"/g, '');
+                        $(ev).attr("editor-font-family", elFontFamily);
+                    }
+                })
+            }
+        });
+    },
+
+    setFontFamilyFromDataAttr: function () {
+        $(".question-html, .ans-explanation-html, .question-preview-html, .ans-preview-html, .InvitationDescription-html, .InvitationDescriptionInJp-html, .RichTextDescription-html, .RichTextDescriptionInJp-html, .questionEN-html, .questionJP-html, .NotificationEmailBody-html").next(".Editor-container").find(".Editor-editor [editor-font-family]").each(function (i, ev) {
+            let editorFontFamily = $(ev).attr("editor-font-family");
+            $(ev).css("font-family", editorFontFamily);
+            $(ev).removeAttr("editor-font-family");
+        });
+    },
+
+    // endregion: Html Editors
+
+    setOpenerWindowLocationHref: function (url) {
+        url = $.trim(url || "");
+
+        if (!url) return;
+
+        if (window.opener) {
+            window.opener.location.href = url;
+        }
+    },
+
+    // region: Sortable
+    sortableHelper: function (event, $tr) {
+        $tr.children().each(function () {
+            $(this).width($(this).width());
+        });
+
+        return $tr;
+    },
+    // endregion: Sortable
+
+    whetherInputFileTypeValid: function ($inputFileElement) {
+        if (!$inputFileElement || ($inputFileElement.length === 0) || ($inputFileElement[0].files.length === 0)) return true;
+
+        for (var i = 0; i < $inputFileElement[0].files.length; i++) {
+            if ($inputFileElement[0].files[i].size === 0) continue;
+
+            var fileName = $.trim($inputFileElement[0].files[i].name || "");
+            if (!fileName) return false;
+            if (!utilities.regexes.regexForUploadableImgFileExtensions.test(fileName)) return false;
+        }
+
+        return true;
+    },
+
+    whetherInputFileTypesValid: function ($inputFileElements) {
+        if (!$inputFileElements || ($inputFileElements.length === 0)) return true;
+
+        var areInputFileTypesValid = true;
+
+        $inputFileElements.each(function () {
+            if (!utilities.whetherInputFileTypeValid($(this))) {
+                areInputFileTypesValid = false;
+                return false;
+            }
+        });
+
+        return areInputFileTypesValid;
+    },
+
+    whetherTotalInputFileSizeExceedsMaxLimit: function (maxTotalUploadFileSize) {
+        maxTotalUploadFileSize = parseInt($.trim(maxTotalUploadFileSize || "0"))
+        maxTotalUploadFileSize = maxTotalUploadFileSize || utilities.constants.totalUploadFileSizeMaxDefault;
+
+        var totalInputFileSize = utilities.getTotalInputFileSize();
+        return (totalInputFileSize > maxTotalUploadFileSize);
+    },
+
+    enableSelectTooltipById: function (Id) {
+        let selectElements = $("select#" + Id);
+
+        utilities.ellipseSelectOption();
+        selectElements.each(getSelectedOption);
+        selectElements.on("change", getSelectedOption);
+
+        selectElements.on("click", function () {
+            $(this).tooltip('hide');
+        })
+
+        function getSelectedOption() {
+            $(this).attr("data-original-title", $(this).find("option:selected").attr("option-text"));
+        }
+
+        $(window).on('resize', function () {
+            utilities.ellipseSelectOption();
+        });
+    },
+
+    ellipseSelectOption: function () {
+        var optionsDiv = $("option").closest("ul.answer-options");
+
+        function getTextWidth(text, font) {
+            var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+            var context = canvas.getContext("2d");
+            context.font = font;
+            var metrics = context.measureText(text);
+            return metrics.width;
+        };
+
+        if (optionsDiv.length > 0) {
+            var optionsDivWdth = optionsDiv.width();
+            if (optionsDivWdth < 450) return; // in mobile no need to ellipse text, as its wraps.
+            $("option").each(function () {
+                if (!$(this).attr("option-text")) {
+                    $(this).attr("option-text", $(this).text().trim());
+                    $(this).attr("title", $(this).text().trim());
+                };
+                var eachText = $(this).attr("option-text").trim();
+                var optionTextWidth = getTextWidth(eachText, "normal 18px arial");
+                if (optionTextWidth > optionsDivWdth) {
+                    var textWidth = optionTextWidth / eachText.length;
+                    var allowedTextLength = Math.floor((optionsDivWdth-140) / textWidth);
+                    eachText = eachText.substring(0, allowedTextLength) + "...";
+                }
+                $(this).text(eachText);
+            });
+        };
+    }
+};
+
+var googleChartUtilities = {
+    drawVAxisLine: function (chart, value, lineColor, lineWidth) {
+        var layout = chart.getChartLayoutInterface();
+        var chartArea = layout.getChartAreaBoundingBox();
+
+        var svg = chart.getContainer().getElementsByTagName('svg')[0];
+        var xLoc = layout.getXLocation(value);
+
+        //svg.appendChild(createLine(xLoc, chartArea.top + chartArea.height, xLoc, chartArea.top, '#00cccc', 4)); // axis line
+        svg.appendChild(this.createLine(xLoc, chartArea.top + chartArea.height, xLoc, chartArea.top, lineColor, lineWidth)); // axis line
+    },
+
+    createLine: function (x1, y1, x2, y2, lineColor, lineWidth) {
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        line.setAttribute('stroke', lineColor);
+        line.setAttribute('stroke-width', lineWidth);
+        return line;
+    }
+};
+
+$(document).ready(function () {
+    $("table").removeClass("table-hover").addClass("table-hover");
+    utilities.prepareDateInputElements();
+
+    utilities.prepareModalFooterCloseBtn();
+    utilities.prepareModalFooterSaveBtn();
+    utilities.prepareModalFooterUploadBtn();
+
+    //utilities.setEditors();
+});
+
+//$(window).on("load", function () {
+//    utilities.repositionFooter();
+//});
+
+//$(window).on("resize", function () {
+//    utilities.repositionFooter();
+//});

@@ -1,0 +1,422 @@
+﻿.w-120px {
+    width: 120px!important;
+}
+
+#ui-datepicker-div {
+    z-index: 2035 !important;
+}
+
+.busyOverlay {
+    color: white;
+    background-color: black;
+    opacity: 0.5;
+    display: none;
+    /*z-index: 1000;*/
+    z-index: 1050; /* Modified, so that the busyOverlay can cover the secondNavBar also. */
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.busyBillboard {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    font-size: 40px;
+    justify-content: center;
+    align-items: center;
+}
+
+.Editor-editor {
+    padding: 2% !important;
+}
+
+    .Editor-editor ul {
+        list-style: disc;
+        margin-left: 15px;
+    }
+
+    .Editor-editor ol {
+        list-style-type: decimal;
+        margin-left: 15px;
+    }
+
+/* row-table-header ----------------------------------- */
+.row-table-header {
+    margin-bottom: 2px;
+}
+
+/* alert-danger ----------------------------------- */
+.alert-danger {
+    border-radius: 10px;
+    margin-bottom: .5rem !important; /* taken from .mb-2 */
+}
+
+/* blue-box2 ----------------------------------- */
+.blue-box2 {
+}
+
+    .blue-box2 .blue-box2-header {
+        background-image: linear-gradient(to right, #315ea2, #0ea5ca);
+        background-image: -webkit-linear-gradient(to right, #315ea2, #0ea5ca);
+        border-radius: 10px 10px 0px 0px;
+        color: #fff;
+        font-size: 1.5rem;
+        font-weight: 700;
+        padding: 1.5rem 1.25rem;
+    }
+
+        .blue-box2 .blue-box2-header a {
+            color: #fff;
+        }
+
+            .blue-box2 .blue-box2-header a:hover {
+                color: #f27e89;
+            }
+
+        .blue-box2 .blue-box2-header h2 {
+            color: #fff;
+            text-transform: capitalize;
+        }
+
+    .blue-box2 .blue-box2-body {
+        padding: 1.25rem 1.25rem;
+        background-color: #fff;
+        border-radius: 0px 0px 10px 10px;
+    }
+
+/* Alert Window ----------------------------------- */
+.alert-window .modal-content {
+    border-top-left-radius: .5rem;
+    border-top-right-radius: .5rem;
+    margin-top: 40%;
+}
+
+.alert-window .modal-header {
+    background-image: -webkit-linear-gradient(to right, #4c78bb, #25bde2);
+    background-image: linear-gradient(to right, #4c78bb, #25bde2);
+}
+
+.alert-window .modal-title {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.alert-window .modal-footer {
+    padding: 0.5rem 1rem;
+}
+
+    .alert-window .modal-footer .btn {
+        min-width: 100px;
+        padding: .25rem .5rem;
+    }
+
+/* Confirmation Window ----------------------------------- */
+.confirmation-window .modal-content {
+    border-top-left-radius: .5rem;
+    border-top-right-radius: .5rem;
+    /*margin-top: 56px;*/
+    margin-top: 40%;
+}
+
+.confirmation-window .modal-header {
+    background-image: -webkit-linear-gradient(to right, #4c78bb, #25bde2);
+    background-image: linear-gradient(to right, #4c78bb, #25bde2);
+    padding-bottom: 1.25rem;
+    padding-top: 1.25rem;
+}
+
+.confirmation-window .modal-header-survey {
+    background-image: -webkit-linear-gradient(to right, #595959, #859398);
+    background-image: linear-gradient(to right, #595959, #859398);
+    padding-bottom: 1.25rem;
+    padding-top: 1.25rem;
+}
+
+.confirmation-window .modal-title {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.confirmation-window .modal-footer {
+    padding: .65rem 1rem;
+}
+
+    .confirmation-window .modal-footer .btn {
+        line-height: 1rem;
+    }
+
+/* Notification Box ----------------------------------- */
+.notification-box {
+    background-color: #f8e5e9;
+    border-radius: 10px;
+    color: #f27e89;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    padding: 1.25rem;
+}
+
+/* Agreement ----------------------------------- */
+.agreement .agreement-content a {
+    font-weight: 700;
+}
+
+.agreement .agreement-content a:hover {
+    text-decoration: underline;
+}
+
+/* Reset Password ----------------------------------- */
+.reset-password {
+    display: flex;
+    flex-flow: wrap;
+    flex-direction: column;
+    /*justify-content: center;*/
+    /*min-height: 80vh;*/
+}
+
+    .reset-password .btn-secondary {
+        line-height: 20px;
+    }
+
+    .reset-password .header {
+        background-image: linear-gradient(to right, #315ea2, #0ea5ca);
+        background-image: -webkit-linear-gradient(to right, #315ea2, #0ea5ca);
+        padding: 40px 30px;
+        border-radius: 10px 10px 0px 0px;
+    }
+
+        .reset-password .header h2 {
+            color: #fff;
+            text-transform: capitalize;
+        }
+
+    .reset-password .content {
+        padding: 25px 30px;
+        background-color: #fff;
+        border-radius: 0px 0px 10px 10px;
+    }
+
+        .reset-password .content h3 {
+            color: #2c2c2c;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+            .reset-password .content h3 span {
+                color: #ff3143
+            }
+
+        .reset-password .content input[type="text"] {
+            max-width: 50%;
+        }
+
+@media only screen and (max-width: 1199.98px) {
+    .reset-password .header {
+        padding: 20px;
+    }
+
+    .reset-password .content {
+        padding: 15px;
+    }
+}
+
+@media only screen and (min-width: 991.99px) {
+    .pull-down-correct-ans {
+        position: relative;
+        right: auto;
+        transform: none;
+        font-size: 20px;
+        line-height: 40px;
+        width: calc(100% - 45px);
+        text-align: left;
+        /*margin-left: 45px;*/
+    }
+}
+
+@media only screen and (max-width: 639.98px) {
+    .reset-password .content input[type="text"] {
+        max-width: 100%;
+    }
+}
+
+@media only screen and (max-width: 575.98px) {
+    .reset-password .content h2 {
+        margin-bottom: 3px;
+    }
+
+    .reset-password .content input[type="text"] {
+        font-size: 28px;
+        line-height: 32px;
+        max-width: 100%;
+    }
+}
+
+@media only screen and (max-width: 375.98px) {
+    .reset-password .content .btn {
+        margin-top: 10px;
+    }
+
+    .reset-password .content h3 {
+        font-size: 14px;
+        line-height: 20px;
+        margin-bottom: 6px;
+    }
+
+    .reset-password .content input[type="text"] {
+        font-size: 20px;
+        line-height: 30px;
+        max-width: 100%;
+    }
+}
+
+.mock-test-name .div-header--content h2 {
+    font-size: 23px;
+}
+/*--Changes to show bullet points----------*/
+.course .question-block .question ul {
+    list-style: disc;
+}
+
+.course .question-block .question ol {
+    list-style: decimal;
+    margin-left: 10px;
+}
+
+.course .question-block .question {
+    padding: 30px;
+}
+    .course .question-block .question .Editor-editor {
+        font-size: 18px;
+    }
+
+    .course .question-block .question pre {
+        display: contents;
+        white-space: pre-wrap;
+    }
+
+    .course .question-block .question .ques-text-size a {
+        color: #007bff;
+        text-decoration:underline;
+    }
+
+.course .answer-review {
+    word-break: unset;
+}
+
+.course .answer-review .ques-text-size ul {
+    list-style: disc;
+    margin-left: 20px;
+}
+
+.course .answer-review .ques-text-size ol {
+    list-style: decimal;
+    margin-left: 20px;
+}
+
+.course .answer-review .ques-text-size pre {
+    display: contents;
+    white-space: pre-wrap;
+}
+
+.course .answer-review .ques-text-size a {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+/* Data Explorer ----------------------------------- */
+.data-explorer .btn-group-sm .btn-primary {
+    border-radius: 2rem;
+    font-size: 1.25rem;
+}
+.data-explorer .btn-group-sm .btn-secondary {
+    min-width: unset;
+}
+
+.course .div-header--content .text-white span {
+    color: #f27e89;
+}
+
+.course .answer-options li {
+    justify-content: unset;
+}
+
+    .course .answer-options li .number-box {
+        width: unset;
+        text-align: left;
+    }
+
+    .course .answer-options li .pull-down-div {
+        width: unset;
+    }
+
+        .course .answer-options li .pull-down-div > select {
+            width: 100%;
+            overflow: hidden !important;
+            white-space: pre;
+            text-overflow: ellipsis;
+            -webkit-appearance: none;
+        }
+    
+    .course .answer-options li h3 {
+        margin-left: auto;
+    }
+
+.course .answer-options .correct-answer h3 pre {
+    white-space: pre-wrap;
+}
+
+/* ************#53057 Start Tooltips text left align ************ */
+.tooltip.show p {
+    text-align: left;
+}
+.tooltip-inner {
+    text-align: left;
+    font-size: 1.125rem;
+    max-width: 600px;
+}
+/* ************#53057 End Tooltips text left align ************ */
+
+/* ************#53084 Cookies Acceptences ********************* */
+.acceptance {
+    display:flex;
+    padding:0.40rem;
+}
+.btn-disabled {
+    background-color:gray!important;
+    color:white!important;
+    cursor:initial!important;
+}
+/* ************#53084 End Cookies Acceptences ********************* */
+
+/* ********** start Preview certificate template ************* */
+.instructor-view-certificate-btn {
+    position: relative;
+    width: 100%;
+    height: 57px;
+    text-align: right;
+}
+/* ********** end Preview certificate template ************* */
+
+/*modified button for Course details View*/
+.btn-insview {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 15px;
+    line-height: 26px;
+    color: #ffffff;
+    text-transform: capitalize;
+    font-weight: 700;
+    background-color: #f27e89;
+    border-radius: 30px;
+    padding: 5px 15px;
+}
+/*footer button for Modal*/

@@ -1,0 +1,394 @@
+﻿
+const uploadTopicFile = async (topicId, learningPathEnrolmentId, learningPathId) => {
+    if (!topicId) return;
+
+    console.log("Upload topicId", topicId);
+
+    const $fileInput = $('#uploadFileFor' + "-" + topicId);
+    const $uploadBtn = $('#uploadFileBtnFor' + "-" + topicId);
+    const $progressContainer = $('#uploadProgress' + "-" + topicId);
+    const $progressBar = $('#progressBar' + "-" + topicId);
+    const $uploadFileInfo = $('#uploadFileInfoFor' + "-" + topicId);
+    const $uploadedFileInfo = $('#uploadedFileInfo' + "-" + topicId);
+    const $uploadedFileName = $('#uploadedFileName' + "-" + topicId);
+    const $downloadFileLink = $('#downloadFileLink' + "-" + topicId);
+    const $errorContainer = $('#uploadError' + "-" + topicId);
+    const $inputGroup = $fileInput.closest('.input-group');
+    const $allBtns = $(`#${topicId} button`);
+
+    // Validate file
+    const validateFile = (file) => {
+        if (!file) return { valid: false, error: 'Please select a file to upload.' };
+        if (!ALLOWED_TYPES.includes(file.type))
+            return { valid: false, error: 'Invalid file type. Only images and PDF files are allowed.' };
+        if (file.size > MAX_FILE_SIZE) {
+            const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+            return { valid: false, error: `File size ${sizeInMB} MB exceeds the 5 MB limit.` };
+        }
+        return { valid: true };
+    }
+
+    // Show error or success message
+    const showMsg = (message, success) => {
+        if (success) $errorContainer.removeClass("alert-danger").addClass("alert-success");
+        else $errorContainer.removeClass("alert-success").addClass("alert-danger");
+        $errorContainer.text(message).show();
+        setTimeout(() => $errorContainer.fadeOut(), 5000);
+    }
+
+    // Update progress bar
+    const updateProgress = (percent) => {
+        $progressBar.css('width', percent + '%')
+            .attr('aria-valuenow', percent)
+            .text(percent + '%');
+    }
+
+    // Upload to Azure Storage using SAS token
+    const uploadToAzure = (file, fileUploadUrl) => {
+        try {
+            // Parse SAS URL to get account, container, and SAS token
+            const urlParts = new URL(fileUploadUrl);
+            const pathParts = urlParts.pathname.split('/').filter(p => p);
+            const containerName = pathParts[0];
+            const blobName = pathParts.slice(1).join('/');
+            const sasToken = urlParts.search; // includes the '?'
+
+            // Create blob service with SAS
+            const blobService = AzureStorage.Blob.createBlobServiceWithSas(
+                `${urlParts.protocol}//${urlParts.host}`,
+                sasToken
+            );
+
+            const decodedBlobName = decodeURIComponent(blobName);
+
+            // Custom promisify for uploadBlobToBlockBlob with progress
+            return new Promise((resolve, reject) => {
+                const customBlockSize = file.size > 32 * 1024 * 1024 ? 4 * 1024 * 1024 : 512 * 1024;
+                const options = {
+                    blockSize: customBlockSize,
+                    progress: (progressEvent) => {
+                        const percent = Math.round((progressEvent.loadedBytes / file.size) * 100);
+                        if (percent >= 20 && percent <= 95) updateProgress(percent);
+                    }
+                };
+
+                blobService.createBlockBlobFromBrowserFile(
+                    containerName,
+                    decodedBlobName,
+                    file,
+                    options,
+                    (error, result) => {
+                        if (error) {
+                            reject(new Error('Upload failed: ' + error.message));
+                        } else {
+                            // Return the blob URL without SAS token
+                            //const blobUrl = `${urlParts.protocol}//${urlParts.host}/${containerName}/${blobName}`;
+                            console.log("uploaded", result);
+                            resolve(true);
+                        }
+                    }
+                );
+            });
+        } catch (error) {
+            console.log('Azure upload error: ' + error.message);
+            throw new Error("Error While Uploading. Try again!!!");
+        }
+    }
+
+    // Get SAS token from backend
+    const getSasToken = async (fileName, fileSize, fileType) => {
+        const requestParams = {
+            LearningPathId: learningPathId,
+            LearningPathEnrolmentId: learningPathEnrolmentId,
+            TopicId: topicId.replace("topic", ""),
+            FileNameWithExtention: fileName,
+            FileSize: fileSize,
+            FileType: fileType
+        };
+        const learningPathTopicFileUploadSasTokenJson = await fetchJsonData("/Learner/LearningPathTopicFileUploadSasToken", {
+            method: 'POST',
+            body: { requestParams },
+        });
+        console.log(learningPathTopicFileUploadSasTokenJson);
+
+        if (learningPathTopicFileUploadSasTokenJson?.result?.Succeeded && learningPathTopicFileUploadSasTokenJson?.result?.Data?.SasToken) {
+            return learningPathTopicFileUploadSasTokenJson.result.Data;
+        }
+
+        throw Error(learningPathTopicFileUploadSasTokenJson?.result?.ErrorMessage ?? "Error While Uploading. Try again!!!");
+    }
+
+    // Validate & get uploaded file Url
+    const validateNGetUploadedfileUrl = async (fileName, fileSize) => {
+
+        const requestParams = {
+            LearningPathId: learningPathId,
+            LearningPathEnrolmentId: learningPathEnrolmentId,
+            TopicId: topicId.replace("topic", ""),
+            FileNameWithExtention: fileName,
+            FileSize: fileSize
+        };
+        const validateNUpdateLearningPathUploadedTopicFileJson = await fetchJsonData("/Learner/ValidateNUpdateLearningPathUploadedTopicFile", {
+            method: 'POST',
+            body: { requestParams },
+        });
+        console.log(validateNUpdateLearningPathUploadedTopicFileJson);
+
+        if (validateNUpdateLearningPathUploadedTopicFileJson?.result?.Succeeded && validateNUpdateLearningPathUploadedTopicFileJson?.result?.Data?.FileDownloadUrl) {
+            return validateNUpdateLearningPathUploadedTopicFileJson.result.Data.FileDownloadUrl;
+        }
+
+        throw Error(validateNUpdateLearningPathUploadedTopicFileJson?.result?.ErrorMessage ?? "Uploaded file is invalid. Try again!!!");
+    }
+
+    const file = $fileInput[0].files[0];
+    const validation = validateFile(file);
+
+    if (!validation.valid) {
+        showMsg(validation.error);
+        return;
+    }
+
+    try {
+        // Reset UI
+        $errorContainer.hide();
+        $uploadedFileInfo.hide();
+        $progressContainer.show();
+        updateProgress(0);
+
+        // Disable upload UI
+        $allBtns.prop('disabled', true);
+        $uploadBtn.html('<div class="spinner-border spinner-for-btn"></div>');
+        $fileInput.prop('disabled', true);
+
+        // Step 1: Get SAS token
+        updateProgress(10);
+        const tokenData = await getSasToken(file.name, file.size, file.type);
+
+        // Step 2: Upload to Azure
+        updateProgress(20);
+        const isUploaded = await uploadToAzure(file, tokenData?.FileUploadUrl);
+        if (!isUploaded) throw Error("Error While Uploading. Try again!!!");
+
+        // Step 2.5: Validate & get uploaded file Url
+        updateProgress(95);
+        const uploadedFileUrl = await validateNGetUploadedfileUrl(file.name, file.size);
+
+        // Step 3: Show success
+        updateProgress(100);
+        setTimeout(() => {
+            $progressContainer.hide();
+            $inputGroup.hide();
+            $uploadFileInfo.hide();
+            $uploadedFileInfo.show();
+            //$uploadedFileInfo.css('display', 'flex');
+            $uploadedFileName.text(file.name);
+            $downloadFileLink.attr('href', uploadedFileUrl);
+
+            // Reset UI
+            $allBtns.prop('disabled', false);
+            $uploadBtn.text('Upload');
+            $fileInput.prop('disabled', false).val('');
+            updateProgress(0);
+            showMsg("File uploaded successfully.", true);
+        }, 500);
+
+    } catch (error) {
+        console.error('Upload error:', error);
+        showMsg(error.message || "Error While Uploading. Try again!!!");
+
+        // Reset UI
+        $progressContainer.hide();
+        $allBtns.prop('disabled', false);
+        $uploadBtn.text('Upload');
+        $fileInput.prop('disabled', false);
+    }
+
+    // Clear error on file selection
+    $fileInput.on('change', () => {
+        $errorContainer.hide();
+    });
+};
+
+const deleteTopicFile = async (topicId, learningPathEnrolmentId) => {
+    if (!topicId) return;
+
+    console.log("Delete topicId", topicId, learningPathEnrolmentId);
+
+    const $fileInput = $('#uploadFileFor' + "-" + topicId);
+    const $uploadFileInfo = $('#uploadFileInfoFor' + "-" + topicId);
+    const $uploadedFileInfo = $('#uploadedFileInfo' + "-" + topicId);
+    const $downloadFileLink = $('#downloadFileLink' + "-" + topicId);
+    const $deleteFileBtn = $('#deleteFileBtnFor' + "-" + topicId);
+    const $errorContainer = $('#uploadError' + "-" + topicId);
+    const $inputGroup = $fileInput.closest('.input-group');
+    const $allBtns = $(`#${topicId} button`);
+
+    // Show error message
+    const showMsg = (message, success) => {
+
+        if (success) $errorContainer.removeClass("alert-danger").addClass("alert-success");
+        else $errorContainer.removeClass("alert-success").addClass("alert-danger");
+
+        $errorContainer.text(message).show();
+        setTimeout(() => $errorContainer.fadeOut(), 5000);
+    }
+
+    // Delete from Azure Storage using SAS token
+    const deleteBlobFromAzure = async () => {
+        try {
+            const requestParams = {
+                LearningPathEnrolmentId: learningPathEnrolmentId,
+                TopicId: topicId.replace("topic", "")
+            };
+            const deleteLearningPathUploadedTopicFileJson = await fetchJsonData("/Learner/DeleteLearningPathUploadedTopicFile", {
+                method: 'POST',
+                body: { requestParams },
+            });
+
+            return !!deleteLearningPathUploadedTopicFileJson?.result?.Succeeded;
+        } catch (error) {
+            console.error('Azure delete error:', error);
+            throw error;
+        }
+    };
+
+    try {
+        // Disable upload UI
+        $allBtns.prop('disabled', true);
+        $deleteFileBtn.html('<div class="spinner-border spinner-for-btn"></div>');
+        $downloadFileLink.addClass('disabled pe-none text-muted').attr('aria-disabled', 'true');
+
+        const isDeleted = await deleteBlobFromAzure();
+
+        if (isDeleted) {
+            showMsg("File Deleted.", true);
+
+            $uploadedFileInfo.hide();
+            $uploadFileInfo.show();
+            $inputGroup.show();
+        } else {
+            showMsg("Error While Deleting. Try again!!!");
+        }
+
+        $allBtns.prop('disabled', false);
+        $deleteFileBtn.html('<i class="fa fa-trash m-0" aria-hidden="true"></i>');
+        $downloadFileLink.removeClass('disabled pe-none text-muted').removeAttr('aria-disabled');
+
+    } catch (error) {
+        console.error('Error While Deleting', error);
+        showMsg("Error While Deleting. Try again!!!");
+        $allBtns.prop('disabled', false);
+        $deleteFileBtn.html('<i class="fa fa-trash m-0" aria-hidden="true"></i>');
+        $downloadFileLink.removeClass('disabled pe-none text-muted').removeAttr('aria-disabled');
+    }
+};
+
+const updateLearningPathTopic = async (topicId, learningPathEnrolmentId, isCompleteBtnClicked) => {
+    if (!topicId) return;
+
+    console.log("Delete topicId", topicId, learningPathEnrolmentId, isCompleteBtnClicked);
+
+    const $commentField = $('#commentFor' + "-" + topicId);
+    let $errorContainer = $('#uploadError' + "-" + topicId);
+    const $submitCommentBtn = $('#SubmitCommentFor' + "-" + topicId);
+    const $completeBtn = $('#SubmitCompletionFor' + "-" + topicId);
+    const $downloadFileLink = $('#downloadFileLink' + "-" + topicId);
+    const $allBtns = $(`#${topicId} button`);
+
+    const activeBtn = isCompleteBtnClicked ? $completeBtn : $submitCommentBtn;
+    const activeBtnInnerhtml = activeBtn.html();
+
+    const comment = $commentField.val().trim();
+
+    // Show error or success message
+    const showMsg = (message, success) => {
+        $errorContainer = $('#uploadError' + "-" + topicId);
+        if (success) $errorContainer.removeClass("alert-danger").addClass("alert-success");
+        else $errorContainer.removeClass("alert-success").addClass("alert-danger");
+
+        $errorContainer.text(message).show();
+        setTimeout(() => $errorContainer.fadeOut(), 5000);
+    }
+
+    // Update comment or status for topic
+    const updateCommentRStaus = async () => {
+        try {
+            const requestParams = {
+                LearningPathEnrolmentId: learningPathEnrolmentId,
+                TopicId: topicId.replace("topic", ""),
+                IsCompleted: isCompleteBtnClicked ? true : $submitCommentBtn.length === 0,
+                Comment: comment
+            };
+            const updateLearningPathTopicJson = await fetchJsonData("/Learner/UpdateLearningPathTopic", {
+                method: 'POST',
+                body: { requestParams },
+            });
+
+            console.log("updateLearningPathTopicJson", updateLearningPathTopicJson);
+
+            if (updateLearningPathTopicJson?.result?.Succeeded && updateLearningPathTopicJson?.html) {
+                return ({
+                    html: updateLearningPathTopicJson.html,
+                    completionPercent: updateLearningPathTopicJson?.result?.Data?.CompletionPercentage
+                });
+            }
+
+            throw Error(updateLearningPathTopicJson?.result?.ErrorMessage ?? "Error While Updating. Try again!!!");
+        } catch (error) {
+            console.error('UpdateLearningPathTopic error:', error);
+            throw error;
+        }
+    };
+
+    if (isCompleteBtnClicked && !comment) {
+        showMsg("Please provide comment before completing.");
+        return;
+    }
+
+    if (!isCompleteBtnClicked && !comment) {
+        showMsg("Please provide comment.");
+        return;
+    }
+
+    try {
+        // Disable upload UI
+        $allBtns.prop('disabled', true);
+        activeBtn.html('<div class="spinner-border spinner-for-btn"></div>');
+        $downloadFileLink.addClass('disabled pe-none text-muted').attr('aria-disabled', 'true');
+
+        const { html, completionPercent} = await updateCommentRStaus();
+
+        if (html) {
+            $(`#${topicId}`).html(html);
+            if (completionPercent >= 0) {
+                const completionPercentHtml = `
+                    <div class="progress" style="height: 10px; width: 95%;">
+                        <div class="progress-bar ${completionPercent == 100 ? `bg-success` : `bg-warning`}" role="progressbar" style="width: ${completionPercent}%;" aria-valuenow="${completionPercent}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="progress-percentage">${completionPercent}%</div>
+                `;
+                $(`#completion-percentage`).html(completionPercentHtml);
+            }
+            afterPartialViewLoad();
+            showMsg(`${isCompleteBtnClicked ? `Topic completed` : `Comment submitted` } successfully.`, true);
+        } else {
+            showMsg("Error While Updating. Try again!!!");
+        }
+
+        $allBtns.prop('disabled', false);
+        activeBtn.html(activeBtnInnerhtml);
+        $downloadFileLink.removeClass('disabled pe-none text-muted').removeAttr('aria-disabled');
+
+    } catch (error) {
+        console.error('Error While Updating', error);
+        showMsg(error?.message ?? "Error While Updating. Try again!!!");
+        $allBtns.prop('disabled', false);
+        activeBtn.html(activeBtnInnerhtml);
+        $downloadFileLink.removeClass('disabled pe-none text-muted').removeAttr('aria-disabled');
+    }
+};
+
+const afterPartialViewLoad = () => {
+    RichTextEditor.reloadPreviewForPartialView();
+}

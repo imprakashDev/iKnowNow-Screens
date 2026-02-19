@@ -1,0 +1,219 @@
+$(document).ready(function () {
+    searchToggle();
+
+    /// Release Alert Cookies for Learner Dashboard
+    if ($("#release-alert").length > 0) {
+        checkReleaseNotify();
+    }
+
+});
+
+/// Release Alert Cookies for Learner Dashboard
+function HideReleaseNotify() {
+   $(".panel-notify").each(function (index, element) {
+        //debugger;
+        data_id = $.trim(this.getAttribute('id'));
+        var cvalue = getCookie(data_id);
+        if (cvalue == null) {
+            setCookie(data_id, data_id)
+        }
+    });
+}
+function checkReleaseNotify() {
+    var showReleaseAlert = false;
+    $(".panel-notify").each(function (index, element) {
+        //debugger;
+        data_id = $.trim(this.getAttribute('id'));
+        //alert(data_id);
+        var cvalue = getCookie(data_id);
+        if (cvalue != data_id) {
+            showReleaseAlert = true
+            $("#" + data_id).show();
+        } 
+    });
+    if (showReleaseAlert == true) {
+        $('#release-alert').show();
+    }
+}
+function setCookie(key, value) {
+   document.cookie = key + '=' + value;
+}
+
+function getCookie(key) {
+    var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+    return keyValue ? keyValue[2] : null;
+}
+
+function searchToggle() {
+    $('.search-course a').on('click', function () {
+        $('.search-course a').toggleClass('clicked');
+        if ($('.search-toggle .btn-group').hasClass('show')) {
+            $('.search-toggle .btn-group').removeClass('show');
+        }
+        else {
+            $('.search-toggle .btn-group').addClass('show');
+        }
+    });
+}
+
+function deepFreeze(object) {
+    if (object) {
+        var property, propertyKey;
+        object = Object.freeze(object);
+        for (propertyKey in object) {
+            if (object.hasOwnProperty(propertyKey)) {
+                property = object[propertyKey];
+                if (
+                    typeof property !== 'object' ||
+                    !(property instanceof Object) ||
+                    Object.isFrozen(property)
+                ) {
+                    continue;
+                }
+                deepFreeze(property);
+            }
+        }
+    }
+    return object;
+}
+
+
+/**
+ * Convert an object to FormData with custom options.
+ * @param {Object} obj - The object to convert.
+ * @param {Object} [options={}] - Conversion options.
+ * @param {boolean} [options.indices=false] - Include array indices in keys.
+ * @param {boolean} [options.nullsAsUndefineds=false] - Treat nulls as undefined.
+ * @param {boolean} [options.booleansAsIntegers=false] - Convert booleans to 1/0.
+ * @param {boolean} [options.allowEmptyArrays=false] - Allow empty arrays in FormData.
+ * @param {boolean} [options.noFilesWithArrayNotation=false] - Avoid array notation for files.
+ * @param {boolean} [options.dotsForObjectNotation=false] - Use dots for nested object keys.
+ * @param {FormData} [formData=new FormData()] - An existing FormData instance to append to.
+ * @param {string} [parentKey=''] - The parent key for nested keys.
+ * @returns {FormData}
+ */
+const convertObjToFormData = (obj, options = {}, formData = new FormData(), parentKey = '') => {
+    const {
+        indices = false,
+        nullsAsUndefineds = false,
+        booleansAsIntegers = false,
+        allowEmptyArrays = false,
+        noFilesWithArrayNotation = false,
+        dotsForObjectNotation = false
+    } = options;
+
+    const appendFormData = (key, value) => {
+        if (value instanceof Date) {
+            formData.append(key, value.toISOString());
+        } else if (typeof value === 'boolean') {
+            formData.append(key, booleansAsIntegers ? Number(value) : value);
+        } else if (value !== null && value !== undefined) {
+            formData.append(key, value);
+        } else if (value === null && !nullsAsUndefineds) {
+            formData.append(key, '');
+        }
+    };
+
+    const buildKey = (base, prop) =>
+        base ? (dotsForObjectNotation ? `${base}.${prop}` : `${base}[${prop}]`) : prop;
+
+    for (const [key, value] of Object.entries(obj)) {
+        const fullKey = buildKey(parentKey, key);
+
+        if (Array.isArray(value)) {
+            if (value.length) {
+                value.forEach((item, index) => {
+                    const arrayKey = noFilesWithArrayNotation && item instanceof File
+                        ? fullKey
+                        : `${fullKey}[${indices ? index : ''}]`;
+                    if (typeof item === "object" && !Array.isArray(item)) {
+                        // Recursively handle nested objects within arrays
+                        convertObjToFormData(item, options, formData, arrayKey);
+                    } else {
+                        appendFormData(arrayKey, item);
+                    }
+                });
+            } else if (allowEmptyArrays) {
+                formData.append(`${fullKey}[]`, '');
+            }
+        } else if (value && typeof value === 'object' && !(value instanceof File)) {
+            convertObjToFormData(value, options, formData, fullKey);
+        } else {
+            appendFormData(fullKey, value);
+        }
+    }
+
+    return formData;
+};
+
+const fetchJsonData = async (url, opts = {}) => {
+    try {
+        const { formDataOptions, ...options } = opts;
+
+        if (options?.method === "POST" && !!options?.body) {
+            options.body = convertObjToFormData(options.body, { indices: true, nullsAsUndefineds: true, ...formDataOptions });
+        }
+
+        const response = await fetch(url, options);
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        console.error(`Failed to fetch from ${url}:`, error);
+        // Handle error appropriately, e.g., return a default value or rethrow the error
+        throw error;
+    }
+};
+
+const fetchResponse = async (url, opts = {}) => {
+    try {
+        const { formDataOptions, ...options } = opts;
+
+        if (options?.method === "POST" && !!options?.body) {
+            options.body = convertObjToFormData(options.body, { indices: true, nullsAsUndefineds: true, ...formDataOptions });
+        }
+
+        const response = await fetch(url, options);
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+
+        return response;
+
+    } catch (error) {
+        console.error(`Failed to fetch from ${url}:`, error);
+        // Handle error appropriately, e.g., return a default value or rethrow the error
+        throw error;
+    }
+};
+
+// Debounce utility
+function debounce(fn, delay) {
+    let timer;
+    return function (...args) {
+        const context = this;
+        clearTimeout(timer);
+        return new Promise((resolve, reject) => {
+            timer = setTimeout(() => {
+                fn.apply(context, args).then(resolve).catch(reject);
+            }, delay);
+        });
+    };
+}
+
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+})
+
+
+
+$('.datepicker').datepicker();
+
+
+

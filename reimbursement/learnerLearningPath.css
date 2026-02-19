@@ -1,0 +1,112 @@
+﻿a.paginate_button {
+    color: #6c757d;
+    border-color: #6c757d;
+}
+
+    a.paginate_button:not(.disabled):not(.active):hover {
+        background-color: #f27e89;
+        color: #fff
+    }
+
+    a.paginate_button.disabled {
+        background-color: #dedede;
+        border-color: #dedede;
+    }
+
+    a.paginate_button.active {
+        background-color: #f27e89;
+        color: #fff;
+    }
+
+.truncate {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.spinner-for-btn {
+    height: 22px;
+    width: 22px;
+}
+
+/* Adjust day box spacing */
+.ui-datepicker .ui-datepicker-calendar tbody td a,
+.ui-datepicker .ui-datepicker-calendar tbody td span {
+    width: 28px;
+    height: 28px;
+    line-height: 18px;
+}
+
+/* Adjust month and year dropdown spacing */
+.ui-datepicker .ui-datepicker-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 1.4em;
+}
+
+.ui-datepicker .ui-datepicker-next.ui-state-hover {
+    background: url(/images/datepicker-next.png);
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.ui-datepicker .ui-datepicker-prev.ui-state-hover {
+    background: url(/images/datepicker-prev.png);
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.ui-datepicker select.ui-datepicker-month,
+.ui-datepicker select.ui-datepicker-year {
+    padding-left: 2px;
+}
+
+/* Theme colors - customize these */
+.learning-path-theme {
+    --lp-primary: #667eea;
+    --lp-secondary: #2b66b1;
+}
+
+    /* Gradient utilities */
+    .learning-path-theme .bg-gradient-primary {
+        background: linear-gradient(135deg, var(--lp-primary) 0%, var(--lp-secondary) 100%);
+    }
+
+    .learning-path-theme .btn-gradient-primary {
+        background: linear-gradient(135deg, var(--lp-primary) 0%, var(--lp-secondary) 100%);
+        color: white;
+        border: none;
+    }
+
+    .learning-path-theme .btn.btn-gradient-primary:hover,
+    .learning-path-theme .btn.btn-gradient-primary:active {
+        background-image: linear-gradient(135deg, var(--lp-secondary) 0%, var(--lp-primary) 100%);
+        color: white;
+    }
+
+.learning-path-title,
+.learning-path-desc {
+    min-height: 52px;
+    max-height: 52px;
+}
+
+.card-header-curved {
+    background-color: var(--lp-primary);
+}
+
+/* learning-path-details styles */
+
+.learning-path-details .card-header figure {
+    background-color: #6b6ed4;
+}
+
+.learning-path-details .card > hr:last-of-type {
+    display: none;
+}
+
+.learning-path-details #uploadedFileName {
+    max-width: 300px;
+}

@@ -1,0 +1,53 @@
+﻿var loader = {
+    addLoader: function () {
+        //var htmlLoader = `<div class="loading-overlay">
+        //                        <div class="loading-overlay-image-container">
+        //                            <div class="loader">
+        //                                <div class="loader-inner ball-grid-pulse">
+        //                                    <div></div>
+        //                                    <div></div>
+        //                                    <div></div>
+        //                                    <div></div>
+        //                                    <div></div>
+        //                                    <div></div>
+        //                                    <div></div>
+        //                                    <div></div>
+        //                                    <div></div>
+        //                                </div>
+        //                            </div>
+        //                        </div>
+        //                    </div>`;
+        var htmlLoader = `<div id="formBusyLoading" class="busyOverlay bg-transparent">
+            <div class="busyBillboard">
+                <h1 class="display-3">
+                    <i class="fa fa-spinner fa-spin text-blue" aria-hidden="true"></i>
+                </h1>
+            </div>
+        </div>`;
+        $("body").append(htmlLoader);  
+    },
+    hideBillboard: function () {
+        if ($('#formBusyLoading').length != 0) {
+            $('#formBusyLoading .busyBillboard').hide();
+        }
+    },
+    removeLoader: function () {
+        //$('.loading-overlay').remove();
+        $('#formBusyLoading').remove();
+    },
+    showLoader: function () {
+        //if ($('.loading-overlay').length == 0) {
+        //    loader.addLoader();
+        //}
+        //$('.loading-overlay').fadeIn("slow");
+
+        if ($('#formBusyLoading').length == 0) {
+            loader.addLoader();
+        }
+        $('#formBusyLoading').fadeIn("slow");
+    },
+    stopLoader: function () {
+        //$('.loading-overlay').fadeOut("slow");
+        $('#formBusyLoading').fadeOut("slow");
+    }
+};
