@@ -228,26 +228,6 @@ img.ProseMirror-separator {
 
     <!-- Upload Container -->
     <div id="reimbursementUploadContainer-36a6b121-c5b8-4c25-920c-2613a2de890a">
-
-        <!-- File Upload -->
-        <div>
-            <label class="form-label fw-bold">
-                Upload File <span class="text-danger">*</span>
-            </label>
-
-            <div class="input-group">
-                <input type="file" accept="image/*,.pdf" class="form-control lh-lg" id="uploadFileForReimbursement-36a6b121-c5b8-4c25-920c-2613a2de890a" aria-describedby="uploadReimbursementBtn-36a6b121-c5b8-4c25-920c-2613a2de890a uploadReimbursementInfo-36a6b121-c5b8-4c25-920c-2613a2de890a" style="border-top-left-radius: 1.175rem; border-bottom-left-radius: 1.175rem;">
-
-                <button class="btn btn-outline-secondary rounded-lg" type="button" id="uploadReimbursementBtn-36a6b121-c5b8-4c25-920c-2613a2de890a" onclick="uploadReimbursementFile(&#39;36a6b121-c5b8-4c25-920c-2613a2de890a&#39;)">
-                    Upload
-                </button>
-            </div>
-
-            <div class="form-text" id="uploadReimbursementInfo-36a6b121-c5b8-4c25-920c-2613a2de890a">
-                Max file size 5 MB (Images and PDF only)
-            </div>
-        </div>
-
         <!-- Amount -->
         <div>
             <label for="amountForReimbursement-36a6b121-c5b8-4c25-920c-2613a2de890a" class="form-label fw-bold">
@@ -270,15 +250,24 @@ img.ProseMirror-separator {
             </div>
         </div>
 
-        <!-- Progress Bar -->
-        <div id="uploadProgressReimbursement-36a6b121-c5b8-4c25-920c-2613a2de890a" class="mt-3" style="display: none;">
-            <div class="progress">
-                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" id="progressBarReimbursement-36a6b121-c5b8-4c25-920c-2613a2de890a" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                    0%
-                </div>
+        <!-- File Upload -->
+        <div>
+            <label class="form-label fw-bold">
+                Upload File <span class="text-danger">*</span>
+            </label>
+
+            <div class="input-group">
+                <input type="file" accept="image/*,.pdf" class="form-control lh-lg" id="uploadFileForReimbursement-36a6b121-c5b8-4c25-920c-2613a2de890a" aria-describedby="uploadReimbursementBtn-36a6b121-c5b8-4c25-920c-2613a2de890a uploadReimbursementInfo-36a6b121-c5b8-4c25-920c-2613a2de890a" style="border-top-left-radius: 1.175rem; border-bottom-left-radius: 1.175rem;">
+
+                <button class="btn btn-outline-secondary rounded-lg" type="button" id="uploadReimbursementBtn-36a6b121-c5b8-4c25-920c-2613a2de890a" onclick="uploadReimbursementFile(&#39;36a6b121-c5b8-4c25-920c-2613a2de890a&#39;)">
+                    Upload
+                </button>
+            </div>
+
+            <div class="form-text" id="uploadReimbursementInfo-36a6b121-c5b8-4c25-920c-2613a2de890a">
+                Max file size 5 MB (Images and PDF only)
             </div>
         </div>
-
         <!-- Uploaded File Info -->
         <div id="uploadedReimbursementFileInfo-36a6b121-c5b8-4c25-920c-2613a2de890a" style="display: none !important;">
             <div class="fw-bold mb-1">Uploaded File</div>
@@ -354,9 +343,6 @@ img.ProseMirror-separator {
                                 <td>Training reimbursement</td>
                                 <td class="fw-bold">400</td>
                                 <td class="text-center">
-                                    <a href="javascript:void(0);" class="me-3 text-primary icon-btn" title="Edit">
-                                        <i class="fa fa-pencil-square-o"></i>
-                                    </a>
                                     <a href="javascript:void(0);" class="text-danger icon-btn" title="Delete" onclick="deleteBill(this, 400)">
                                         <i class="fa fa-trash-o"></i>
                                     </a>
@@ -373,9 +359,6 @@ img.ProseMirror-separator {
                                 <td>Travel reimbursement</td>
                                 <td class="fw-bold">200</td>
                                 <td class="text-center">
-                                    <a href="javascript:void(0);" class="me-3 text-primary icon-btn" title="Edit">
-                                        <i class="fa fa-pencil-square-o"></i>
-                                    </a>
                                     <a href="javascript:void(0);" class="text-danger icon-btn" title="Delete" onclick="deleteBill(this, 200)">
                                         <i class="fa fa-trash-o"></i>
                                     </a>
@@ -392,9 +375,6 @@ img.ProseMirror-separator {
                                 <td>Meal reimbursement</td>
                                 <td class="fw-bold">500</td>
                                 <td class="text-center">
-                                    <a href="javascript:void(0);" class="me-3 text-primary icon-btn" title="Edit">
-                                        <i class="fa fa-pencil-square-o"></i>
-                                    </a>
                                     <a href="javascript:void(0);" class="text-danger icon-btn" title="Delete" onclick="deleteBill(this, 500)">
                                         <i class="fa fa-trash-o"></i>
                                     </a>
