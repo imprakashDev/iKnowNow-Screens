@@ -484,7 +484,7 @@
                                                         <td>
                                                             <a href="/iKnowNow_TrainingAttendance.html"
                                                                 class="text-decoration-none text-primary fw-bold">
-                                                                8 / 8
+                                                                8 / 12
                                                             </a>
                                                         </td>
 
@@ -529,7 +529,7 @@
                                                         <td>
                                                             <a href="/iKnowNow_TrainingAttendance.html"
                                                                 class="text-decoration-none text-primary fw-bold">
-                                                                10 / 10
+                                                                10 / 12
                                                             </a>
                                                         </td>
 
@@ -583,6 +583,96 @@
             </div>
         </main>
     </div>
+    <!-- Attendance Modal -->
+    <div class="modal fade" id="attendanceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 rounded-3 shadow">
+
+                <div class="modal-header text-white"
+                    style="background-image: linear-gradient(to right, #4c78bb, #25bde2);">
+                    <h5 class="modal-title">
+                        <i class="fa fa-calendar-check-o me-2"></i>
+                        Course Attendance
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body p-3 p-md-4">
+
+                    <div class="card shadow-sm border-0 rounded-3">
+
+                        <div class="card-header bg-transparent border-0 pb-0">
+                            <h6 class="fw-semibold mb-0" id="attendanceCourseTitle">
+                                Basic Safety Training (BST)
+                            </h6>
+                            <small class="text-muted">Attendance Details</small>
+                        </div>
+
+                        <div class="card-body p-3">
+
+                            <div class="table-responsive mt-2">
+                                <table class="table table-bordered table-hover align-middle text-center">
+                                    <thead class="text-white"
+                                        style="background-image: linear-gradient(to right, #4c78bb, #25bde2);">
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th style="width:200px;">Action</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody id="attendanceTableBody">
+
+                                        <tr>
+                                            <td>12-Feb-2026</td>
+                                            <td>
+                                                <span class="badge bg-success">
+                                                    <i class="fa fa-check-circle me-1"></i> Present
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-muted small">No Action</span>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>13-Feb-2026</td>
+                                            <td>
+                                                <span class="badge bg-danger">
+                                                    <i class="fa fa-times-circle me-1"></i> Absent
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="badge bg-danger">
+                                                    Regularize
+                                                </a>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>14-Feb-2026</td>
+                                            <td>
+                                                <span class="badge bg-secondary">
+                                                    <i class="fa fa-clock-o me-1"></i> Future
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-muted small">Not Available</span>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
 
 
     <footer class="footer">
@@ -634,6 +724,21 @@
             }
             $span.remove();
         })(jQuery);
+    </script>
+    <script>
+        $(document).on("click", ".attendance-link", function () {
+
+            var courseTitle = $(this).data("course");
+
+            // Set dynamic course title
+            $("#attendanceCourseTitle").text(courseTitle);
+
+            // Show modal
+            var attendanceModal = new bootstrap.Modal(
+                document.getElementById('attendanceModal')
+            );
+            attendanceModal.show();
+        });
     </script>
 
     <script src="./training/ELearning.Web.Site.min.js.download" crossorigin="anonymous"></script>
