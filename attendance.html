@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <!-- saved from url=(0079)file:///D:/Project/iKnowNow/TMS/Trainging%20Module/iKnowNow%20_%20Training.html -->
-<html lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
+<html lang="en-US">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -12,7 +15,8 @@
     <!-- Google Fonts / Open Sans -->
     <link rel="stylesheet" href="./attendance/googleapis-fonts.css">
     <link href="./attendance/css2" rel="stylesheet">
-    <link rel="stylesheet" href="./attendance/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="./attendance/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link href="./attendance/bootstrap.min.css" rel="stylesheet">
     <link href="./attendance/jquery-ui.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./attendance/rich-text-editor.css">
@@ -105,6 +109,51 @@
             display: block;
         }
     </style>
+    <style>
+        .attendance-day-card {
+            width: 140px;
+            height: 140px;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.25s ease;
+        }
+
+        .attendance-day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .attendance-day-card .date {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .attendance-day-card .status {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Background colors only */
+        .attendance-day-card.present {
+            background-color: #e8f7ee;
+        }
+
+        .attendance-day-card.absent {
+            background-color: #fdeaea;
+        }
+
+        .attendance-day-card.future {
+            background-color: #f1f1f1;
+        }
+    </style>
 </head>
 
 <body class="">
@@ -116,7 +165,9 @@
         <nav class="navbar topNavBar navbar-expand-lg bg-primary">
             <div class="container">
                 <div class="left-header">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon">
                             <span></span>
                             <span></span>
@@ -132,7 +183,8 @@
                                 <a class="nav-link" href="javascript:void(0);">Learner</a>
                                 <ul class="sub-nav">
                                     <li><a href="https://dev-iknownow.mol-it.com/Learner" title="">home</a></li>
-                                    <li><a href="https://dev-iknownow.mol-it.com/Learner/PublicCourseDashboard" title="">Public Courses</a></li>
+                                    <li><a href="https://dev-iknownow.mol-it.com/Learner/PublicCourseDashboard"
+                                            title="">Public Courses</a></li>
                                 </ul>
                             </li>
 
@@ -140,13 +192,20 @@
                                 <a class="nav-link" href="javascript:void(0);">Instructor</a>
                                 <ul class="sub-nav">
                                     <li><a href="https://dev-iknownow.mol-it.com/Instructor" title="">home</a></li>
-                                    <li><a href="https://dev-iknownow.mol-it.com/Instructor/SurveyDashboard" title="">survey dashboard</a></li>
-                                    <li><a href="https://dev-iknownow.mol-it.com/Instructor/ViewSearchCourses" title="">manage courses</a></li>
-                                    <li><a href="https://dev-iknownow.mol-it.com/Instructor/ViewSearchEvaluableCourses" title="">manage evaluable courses</a></li>
-                                    <li><a href="https://dev-iknownow.mol-it.com/Instructor/ViewSearchSurveys" title="">manage surveys</a></li>
-                                    <li><a href="https://dev-iknownow.mol-it.com/Instructor/GoToReports" title="">reports</a></li>
-                                    <li><a href="https://dev-iknownow.mol-it.com/Instructor/GoToSurveyReports" title="">survey reports</a></li>
-                                    <li><a href="https://dev-iknownow.mol-it.com/Instructor/PreCourseNSurveyNotifications">pre
+                                    <li><a href="https://dev-iknownow.mol-it.com/Instructor/SurveyDashboard"
+                                            title="">survey dashboard</a></li>
+                                    <li><a href="https://dev-iknownow.mol-it.com/Instructor/ViewSearchCourses"
+                                            title="">manage courses</a></li>
+                                    <li><a href="https://dev-iknownow.mol-it.com/Instructor/ViewSearchEvaluableCourses"
+                                            title="">manage evaluable courses</a></li>
+                                    <li><a href="https://dev-iknownow.mol-it.com/Instructor/ViewSearchSurveys"
+                                            title="">manage surveys</a></li>
+                                    <li><a href="https://dev-iknownow.mol-it.com/Instructor/GoToReports"
+                                            title="">reports</a></li>
+                                    <li><a href="https://dev-iknownow.mol-it.com/Instructor/GoToSurveyReports"
+                                            title="">survey reports</a></li>
+                                    <li><a
+                                            href="https://dev-iknownow.mol-it.com/Instructor/PreCourseNSurveyNotifications">pre
                                             course &amp; survey notifications</a></li>
 
                                     <li><a href="https://dev-iknownow.mol-it.com/Instructor/ViewSearchLearningPath">manage
@@ -163,7 +222,8 @@
                                     <li><a href="https://dev-iknownow.mol-it.com/Admin" title="">home</a></li>
                                     <li><a href="https://dev-iknownow.mol-it.com/User/ViewUsers" title="">manage
                                             users</a></li>
-                                    <li><a href="https://dev-iknownow.mol-it.com/Admin/ViewInstructorGroups" title="">manage instructor groups</a></li>
+                                    <li><a href="https://dev-iknownow.mol-it.com/Admin/ViewInstructorGroups"
+                                            title="">manage instructor groups</a></li>
                                     <li><a href="https://dev-iknownow.mol-it.com/Admin/ViewDepartments" title="">manage
                                             departments</a></li>
                                     <li><a href="https://dev-iknownow.mol-it.com/Admin/ViewTeams" title="">manage
@@ -179,15 +239,18 @@
 
                 <div class="right-header">
                     <div class="dropdown my-auto">
-                        <a href="javascript:void(0);" id="language" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a href="javascript:void(0);" id="language" role="button" data-bs-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
                             <i class="fa fa-bell bell"></i>
                             <span class="bellSpan">
                                 0
                             </span>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end notificationDropdown" aria-labelledby="navbarDropdown">
+                        <div class="dropdown-menu dropdown-menu-end notificationDropdown"
+                            aria-labelledby="navbarDropdown">
                             <a class="dropdown-item notificationItem">No new notification.</a>
-                            <a class="dropdown-item notificationItem detailsLink" href="https://dev-iknownow.mol-it.com/Learner/ViewReleases">
+                            <a class="dropdown-item notificationItem detailsLink"
+                                href="https://dev-iknownow.mol-it.com/Learner/ViewReleases">
                                 <u>Releases</u>
                             </a>
                         </div>
@@ -199,16 +262,25 @@
                             <h6 class="d-none d-sm-inline-block">
                                 SAH, Prakash <small>MITIN</small>
                             </h6>
-                            <a class="dropdown-toggle" href="https://dev-iknownow.mol-it.com/Learner/ViewAllHistoryExpiredCompleteIncompleteCourses#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="dropdown-toggle"
+                                href="https://dev-iknownow.mol-it.com/Learner/ViewAllHistoryExpiredCompleteIncompleteCourses#"
+                                id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
                                 PS
                             </a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="https://dev-iknownow.mol-it.com/Learner/ViewUserProfile">my profile</a>
-                                <a class="dropdown-item" target="_blank" href="https://dev-iknownow.mol-it.com/Help">Help</a>
-                                <a class="dropdown-item" target="_blank" href="https://dev-iknownow.mol-it.com/Help/Jp">Help (Japanese)</a>
-                                <a class="dropdown-item" target="_blank" href="https://dev-iknownow.mol-it.com/Faq">FAQ</a>
-                                <a class="dropdown-item" target="_blank" href="https://dev-iknownow.mol-it.com/Faq/Jp">FAQ (Japanese)</a>
-                                <a class="dropdown-item" href="https://dev-iknownow.mol-it.com/Shared/CallSignOut/" id="ssout">signout</a>
+                                <a class="dropdown-item"
+                                    href="https://dev-iknownow.mol-it.com/Learner/ViewUserProfile">my profile</a>
+                                <a class="dropdown-item" target="_blank"
+                                    href="https://dev-iknownow.mol-it.com/Help">Help</a>
+                                <a class="dropdown-item" target="_blank"
+                                    href="https://dev-iknownow.mol-it.com/Help/Jp">Help (Japanese)</a>
+                                <a class="dropdown-item" target="_blank"
+                                    href="https://dev-iknownow.mol-it.com/Faq">FAQ</a>
+                                <a class="dropdown-item" target="_blank"
+                                    href="https://dev-iknownow.mol-it.com/Faq/Jp">FAQ (Japanese)</a>
+                                <a class="dropdown-item" href="https://dev-iknownow.mol-it.com/Shared/CallSignOut/"
+                                    id="ssout">signout</a>
                             </div>
                         </div>
                     </div>
@@ -217,230 +289,264 @@
         </nav>
         <main class="site-main ">
 
-    <link href="./attendance/jquery-dataTables-1.13.11-min.css" rel="stylesheet">
+            <link href="./attendance/jquery-dataTables-1.13.11-min.css" rel="stylesheet">
 
-    <style>
-        #searchToggle input:focus,
-        #searchToggle select:focus {
-            border-color: #80bdff;
-            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(126, 239, 104, 0.6);
-            outline: 0 none;
-        }
+            <style>
+                #searchToggle input:focus,
+                #searchToggle select:focus {
+                    border-color: #80bdff;
+                    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(126, 239, 104, 0.6);
+                    outline: 0 none;
+                }
 
-        .attendance-badge {
-            font-size: 13px;
-            padding: 8px 14px;
-            border-radius: 20px;
-        }
-    </style>
+                .attendance-badge {
+                    font-size: 13px;
+                    padding: 8px 14px;
+                    border-radius: 20px;
+                }
+            </style>
 
-    <form>
-        <section class="dashboard learner-dashboard">
+            <form>
+                <section class="dashboard learner-dashboard">
 
-            <div id="formBusyLoading" class="busyOverlay bg-transparent" style="display: none;">
-                <div class="busyBillboard">
-                    <h1 class="display-3">
-                        <i class="fa fa-spinner fa-spin text-blue" aria-hidden="true"></i>
-                    </h1>
-                </div>
-            </div>
+                    <div id="formBusyLoading" class="busyOverlay bg-transparent" style="display: none;">
+                        <div class="busyBillboard">
+                            <h1 class="display-3">
+                                <i class="fa fa-spinner fa-spin text-blue" aria-hidden="true"></i>
+                            </h1>
+                        </div>
+                    </div>
 
-            <div class="container">
+                    <div class="container">
+                        <!-- Attendance Table 1-->
+                        <div class="card shadow-sm border-0 rounded-3 mt-4">
 
-                <!-- Attendance Table -->
-                <div class="card shadow-sm border-0 rounded-3 mt-4">
-
-                    <div class="card-header d-flex flex-column flex-md-row gap-3 gap-md-0 bg-gradient-primary text-white border-0" style="
+                            <div class="card-header d-flex flex-column flex-md-row gap-3 gap-md-0 bg-gradient-primary text-white border-0"
+                                style="
     background-image: linear-gradient(to right, #4c78bb, #25bde2);
 ">
-                        <div class="d-flex align-items-center flex-grow-1 me-md-3">
-                            <figure class="fs-1 rounded-circle bg-opacity-25 d-flex me-3 p-3">
-                                <i class="fa fa-calendar-check-o"></i>
-                            </figure>
-                            <div>
-                                <h5 class="truncate mb-0 fw-semibold">Basic Safety Training (BST)</h5>
-                                <small class="text-white-50">Course Attendance</small>
+                                <div class="d-flex align-items-center flex-grow-1 me-md-3">
+                                    <figure class="fs-1 rounded-circle bg-opacity-25 d-flex me-3 p-3">
+                                        <i class="fa fa-calendar-check-o"></i>
+                                    </figure>
+                                    <div>
+                                        <h5 class="truncate mb-0 fw-semibold">Basic Safety Training (BST)</h5>
+                                        <small class="text-white-50">Course Attendance</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-body p-3 p-md-4">
+
+                                <div class="table-responsive mt-2">
+                                    <table class="table table-bordered table-hover align-middle text-center">
+                                        <thead class="teableHeadcolor text-white">
+                                            <tr style="background-image: linear-gradient(to right, #4c78bb, #25bde2);">
+                                                <th>Date</th>
+                                                <th>Status</th>
+                                                <th style="width:200px;">Action</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody id="attendanceTableBody">
+
+                                            <!-- Present -->
+                                            <tr>
+                                                <td>12-Feb-2026</td>
+                                                <td>
+                                                    <span class="badge bg-success attendance-badge">
+                                                        <i class="fa fa-check-circle me-1"></i> Present
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="text-muted small">No Action</span>
+                                                </td>
+                                            </tr>
+
+                                            <!-- Absent -->
+                                            <tr>
+                                                <td>13-Feb-2026</td>
+                                                <td>
+                                                    <span class="badge bg-danger attendance-badge">
+                                                        <i class="fa fa-times-circle me-1"></i> Absent
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a href="file:///D:/Project/iKnowNow/TMS/Trainging%20Module/iKnowNow%20_%20Training.html#"
+                                                        class="badge bg-danger feedback-badge">Regularize</a>
+
+                                                </td>
+                                            </tr>
+
+                                            <!-- Future -->
+                                            <tr>
+
+                                                <td>14-Feb-2026</td>
+                                                <td>
+                                                    <span class="badge bg-secondary attendance-badge">
+                                                        <i class="fa fa-clock-o me-1"></i> Future
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="text-muted small">Not Available</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
                             </div>
                         </div>
                     </div>
+                </section>
+                <section>
+                    <div class="container">
+                        <!-- Attendance Table 2-->
+                        <div class="d-flex flex-wrap gap-3 mt-3 justify-content-start" id="attendanceCardContainer">
 
-                    <div class="card-body p-3 p-md-4">
+                            <!-- Present -->
+                            <div class="attendance-day-card present">
+                                <div class="date">12-Feb-2026</div>
+                                <div class="status">Present</div>
+                                <div class="action small text-muted">No Action</div>
+                            </div>
 
-                        <div class="table-responsive mt-2">
-                            <table class="table table-bordered table-hover align-middle text-center">
-                                <thead class="teableHeadcolor text-white">
-                                    <tr style="background-image: linear-gradient(to right, #4c78bb, #25bde2);">
-                                        <th>Date</th>
-                                        <th>Status</th>
-                                        <th style="width:200px;">Action</th>
-                                    </tr>
-                                </thead>
+                            <!-- Absent -->
+                            <div class="attendance-day-card absent">
+                                <div class="date">13-Feb-2026</div>
+                                <div class="status">Absent</div>
+                                <div class="action">
+                                    <a href="#" class="small text-decoration-none fw-semibold">
+                                        Regularize
+                                    </a>
+                                </div>
+                            </div>
 
-                                <tbody id="attendanceTableBody">
+                            <!-- Future -->
+                            <div class="attendance-day-card future">
+                                <div class="date">14-Feb-2026</div>
+                                <div class="status">Future</div>
+                                <div class="action small text-muted">Not Available</div>
+                            </div>
 
-                                    <!-- Present -->
-                                    <tr>
-                                        <td>12-Feb-2026</td>
-                                        <td>
-                                            <span class="badge bg-success attendance-badge">
-                                                <i class="fa fa-check-circle me-1"></i> Present
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span class="text-muted small">No Action</span>
-                                        </td>
-                                    </tr>
+                        </div>
+                    </div>
+                </section>
+            </form>
 
-                                    <!-- Absent -->
-                                    <tr>
-                                        <td>13-Feb-2026</td>
-                                        <td>
-                                            <span class="badge bg-danger attendance-badge">
-                                                <i class="fa fa-times-circle me-1"></i> Absent
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a href="file:///D:/Project/iKnowNow/TMS/Trainging%20Module/iKnowNow%20_%20Training.html#" class="badge bg-danger feedback-badge">Regularize</a>
 
-                                        </td>
-                                    </tr>
+            <!-- Regularization Modal -->
+            <div class="modal fade" id="regularizationModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content rounded-4 border-0 shadow">
 
-                                    <!-- Future -->
-                                    <tr>
+                        <div class="modal-header">
+                            <h5 class="modal-title fw-bold">
+                                <i class="fa fa-edit me-2 text-primary"></i> Attendance Regularization
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
 
-                                        <td>14-Feb-2026</td>
-                                        <td>
-                                            <span class="badge bg-secondary attendance-badge">
-                                                <i class="fa fa-clock-o me-1"></i> Future
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span class="text-muted small">Not Available</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Date</label>
+                                <input type="text" class="form-control" id="regDate" readonly="">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Session</label>
+                                <input type="text" class="form-control" id="regDay" readonly="">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Reason</label>
+                                <textarea class="form-control" id="regReason" rows="3"
+                                    placeholder="Enter reason for regularization..."></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Supporting Document (Optional)</label>
+                                <input type="file" class="form-control" id="regFile">
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-outline-secondary fw-bold px-4" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                            <button class="btn btn-primary fw-bold px-4" onclick="submitRegularizationRequest()">
+                                <i class="fa fa-paper-plane me-1"></i> Submit
+                            </button>
                         </div>
 
                     </div>
                 </div>
-
             </div>
-        </section>
-    </form>
 
 
-    <!-- Regularization Modal -->
-    <div class="modal fade" id="regularizationModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 border-0 shadow">
+            <!-- Scripts -->
+            <script>
+                $(document).ready(function () {
+                    $("#attendanceDate").datepicker({
+                        dateFormat: 'dd-M-yy',
+                        onClose: function () {
+                            this.focus();
+                        }
+                    });
+                });
 
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold">
-                        <i class="fa fa-edit me-2 text-primary"></i> Attendance Regularization
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
+                function openRegularizationModal(date, day) {
+                    document.getElementById("regDate").value = date;
+                    document.getElementById("regDay").value = day;
+                    document.getElementById("regReason").value = "";
 
-                <div class="modal-body">
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Date</label>
-                        <input type="text" class="form-control" id="regDate" readonly="">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Session</label>
-                        <input type="text" class="form-control" id="regDay" readonly="">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Reason</label>
-                        <textarea class="form-control" id="regReason" rows="3" placeholder="Enter reason for regularization..."></textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Supporting Document (Optional)</label>
-                        <input type="file" class="form-control" id="regFile">
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-outline-secondary fw-bold px-4" data-bs-dismiss="modal">
-                        Cancel
-                    </button>
-                    <button class="btn btn-primary fw-bold px-4" onclick="submitRegularizationRequest()">
-                        <i class="fa fa-paper-plane me-1"></i> Submit
-                    </button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Scripts -->
-    <script>
-        $(document).ready(function () {
-            $("#attendanceDate").datepicker({
-                dateFormat: 'dd-M-yy',
-                onClose: function () {
-                    this.focus();
+                    let modal = new bootstrap.Modal(document.getElementById("regularizationModal"));
+                    modal.show();
                 }
-            });
-        });
 
-        function openRegularizationModal(date, day) {
-            document.getElementById("regDate").value = date;
-            document.getElementById("regDay").value = day;
-            document.getElementById("regReason").value = "";
+                function submitRegularizationRequest() {
+                    let date = document.getElementById("regDate").value;
+                    let day = document.getElementById("regDay").value;
+                    let reason = document.getElementById("regReason").value;
 
-            let modal = new bootstrap.Modal(document.getElementById("regularizationModal"));
-            modal.show();
-        }
+                    if (reason.trim() === "") {
+                        alert("Please enter reason for regularization.");
+                        return;
+                    }
 
-        function submitRegularizationRequest() {
-            let date = document.getElementById("regDate").value;
-            let day = document.getElementById("regDay").value;
-            let reason = document.getElementById("regReason").value;
+                    alert("Regularization request submitted for " + day + " (" + date + ")");
+                    let modal = bootstrap.Modal.getInstance(document.getElementById("regularizationModal"));
+                    modal.hide();
+                }
 
-            if (reason.trim() === "") {
-                alert("Please enter reason for regularization.");
-                return;
-            }
+                function filterAttendance() {
+                    let selectedDate = document.getElementById("attendanceDate").value.toLowerCase();
+                    let status = document.getElementById("attendanceStatus").value.toLowerCase();
 
-            alert("Regularization request submitted for " + day + " (" + date + ")");
-            let modal = bootstrap.Modal.getInstance(document.getElementById("regularizationModal"));
-            modal.hide();
-        }
+                    let rows = document.querySelectorAll("#attendanceTableBody tr");
 
-        function filterAttendance() {
-            let selectedDate = document.getElementById("attendanceDate").value.toLowerCase();
-            let status = document.getElementById("attendanceStatus").value.toLowerCase();
+                    rows.forEach(row => {
+                        let rowText = row.innerText.toLowerCase();
 
-            let rows = document.querySelectorAll("#attendanceTableBody tr");
+                        let matchDate = selectedDate === "" || rowText.includes(selectedDate);
+                        let matchStatus = status === "" || rowText.includes(status);
 
-            rows.forEach(row => {
-                let rowText = row.innerText.toLowerCase();
+                        row.style.display = (matchDate && matchStatus) ? "" : "none";
+                    });
+                }
 
-                let matchDate = selectedDate === "" || rowText.includes(selectedDate);
-                let matchStatus = status === "" || rowText.includes(status);
+                function clearAttendanceSearch() {
+                    document.getElementById("attendanceDate").value = "";
+                    document.getElementById("attendanceStatus").value = "";
 
-                row.style.display = (matchDate && matchStatus) ? "" : "none";
-            });
-        }
+                    let rows = document.querySelectorAll("#attendanceTableBody tr");
+                    rows.forEach(row => row.style.display = "");
+                }
+            </script>
 
-        function clearAttendanceSearch() {
-            document.getElementById("attendanceDate").value = "";
-            document.getElementById("attendanceStatus").value = "";
-
-            let rows = document.querySelectorAll("#attendanceTableBody tr");
-            rows.forEach(row => row.style.display = "");
-        }
-    </script>
-
-</main>
+        </main>
 
     </div>
 
@@ -518,7 +624,8 @@
 
 
     <!-- Pre-initialize RTE to ensure it loads instantly when required -->
-    <textarea name="Pre-initialize RTE" data-rte-id="preInitRte" class="d-none" data-rte-style="display: none;"></textarea>
+    <textarea name="Pre-initialize RTE" data-rte-id="preInitRte" class="d-none"
+        data-rte-style="display: none;"></textarea>
     <div id="preInitRte">
         <div class="tiptap-editor-container">
 
@@ -539,15 +646,22 @@
                     </button>
                     <button type="button" data-command="code" title="Inline Code">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7 8l-4 4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
-                            <path d="M17 8l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
-                            <path d="M14 4l-4 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+                            <path d="M7 8l-4 4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" fill="none"></path>
+                            <path d="M17 8l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" fill="none"></path>
+                            <path d="M14 4l-4 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" fill="none"></path>
                         </svg>
                     </button>
                     <button type="button" data-command="blockquote" title="Quote">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M.78,8.89c0-3.07,1.53-4.3,4.3-4.34L5.38,6C3.78,6.17,3,7,3.1,8.31H4.54V12H.78Zm5.9,0c0-3.07,1.53-4.3,4.3-4.34L11.28,6C9.68,6.17,8.89,7,9,8.31h1.44V12H6.68Z" fill="currentColor"></path>
-                            <path d="M16.94,15.11c0,3.07-1.53,4.3-4.3,4.34L12.35,18c1.6-.16,2.39-1,2.28-2.3H13.18V12h3.76Zm5.9,0c0,3.07-1.53,4.3-4.3,4.34L18.24,18c1.6-.16,2.39-1,2.28-2.3H19.08V12h3.76Z" fill="currentColor"></path>
+                            <path
+                                d="M.78,8.89c0-3.07,1.53-4.3,4.3-4.34L5.38,6C3.78,6.17,3,7,3.1,8.31H4.54V12H.78Zm5.9,0c0-3.07,1.53-4.3,4.3-4.34L11.28,6C9.68,6.17,8.89,7,9,8.31h1.44V12H6.68Z"
+                                fill="currentColor"></path>
+                            <path
+                                d="M16.94,15.11c0,3.07-1.53,4.3-4.3,4.34L12.35,18c1.6-.16,2.39-1,2.28-2.3H13.18V12h3.76Zm5.9,0c0,3.07-1.53,4.3-4.3,4.34L18.24,18c1.6-.16,2.39-1,2.28-2.3H19.08V12h3.76Z"
+                                fill="currentColor"></path>
                         </svg>
                     </button>
                 </div>
@@ -601,9 +715,12 @@
                     </button>
                     <button type="button" data-command="orderedList" title="Numbered List">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <text x="6" y="9" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="currentColor">1</text>
-                            <text x="6" y="14" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="currentColor">2</text>
-                            <text x="6" y="19" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="currentColor">3</text>
+                            <text x="6" y="9" text-anchor="middle" font-family="Arial, sans-serif" font-size="10"
+                                font-weight="bold" fill="currentColor">1</text>
+                            <text x="6" y="14" text-anchor="middle" font-family="Arial, sans-serif" font-size="10"
+                                font-weight="bold" fill="currentColor">2</text>
+                            <text x="6" y="19" text-anchor="middle" font-family="Arial, sans-serif" font-size="10"
+                                font-weight="bold" fill="currentColor">3</text>
                             <rect x="11" y="6" width="10" height="2" rx="1" fill="currentColor"></rect>
                             <rect x="11" y="11" width="10" height="2" rx="1" fill="currentColor"></rect>
                             <rect x="11" y="16" width="10" height="2" rx="1" fill="currentColor"></rect>
@@ -616,22 +733,29 @@
                 <!-- Color Tools Group -->
                 <div class="toolbar-group">
                     <div class="tiptap-color-picker">
-                        <input id="textColorPicker" type="color" data-command="textColor" title="Text Color" value="#000000">
+                        <input id="textColorPicker" type="color" data-command="textColor" title="Text Color"
+                            value="#000000">
                         <label for="textColorPicker">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
                                 <!-- Letter A -->
-                                <path d="M12 3L5 17h2.5L8.5 14h7L16.5 17H19L12 3zm-2.5 8L12 6l2.5 5h-5z" fill="currentColor"></path>
+                                <path d="M12 3L5 17h2.5L8.5 14h7L16.5 17H19L12 3zm-2.5 8L12 6l2.5 5h-5z"
+                                    fill="currentColor"></path>
                                 <!-- Color bar underneath -->
                                 <rect x="4" y="19" width="16" height="2" rx="1" fill="#FF0000"></rect>
                             </svg>
                         </label>
                     </div>
                     <div class="tiptap-color-picker">
-                        <input id="backgroundColorPicker" type="color" data-command="backgroundColor" title="Highlight" value="#ffff00">
+                        <input id="backgroundColorPicker" type="color" data-command="backgroundColor" title="Highlight"
+                            value="#ffff00">
                         <label for="backgroundColorPicker">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
                                 <!-- Highlighter pencil -->
-                                <path d="m20.707 5.826-3.535-3.533a.999.999 0 0 0-1.408-.006L7.096 10.82a1.01 1.01 0 0 0-.273.488l-1.024 4.437L4 18h2.828l1.142-1.129 3.588-.828c.18-.042.345-.133.477-.262l8.667-8.535a1 1 0 0 0 .005-1.42zm-9.369 7.833-2.121-2.12 7.243-7.131 2.12 2.12-7.242 7.131z" fill="currentColor"></path>
+                                <path
+                                    d="m20.707 5.826-3.535-3.533a.999.999 0 0 0-1.408-.006L7.096 10.82a1.01 1.01 0 0 0-.273.488l-1.024 4.437L4 18h2.828l1.142-1.129 3.588-.828c.18-.042.345-.133.477-.262l8.667-8.535a1 1 0 0 0 .005-1.42zm-9.369 7.833-2.121-2.12 7.243-7.131 2.12 2.12-7.242 7.131z"
+                                    fill="currentColor"></path>
                                 <!-- Yellow highlight line -->
                                 <path d="M4 20h16v2H4z" fill="#FFD700"></path>
                             </svg>
@@ -645,28 +769,47 @@
                 <div class="toolbar-group">
                     <button type="button" data-command="link" title="Insert Link (Ctrl+K)">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
-                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
                         </svg>
                     </button>
                     <button type="button" data-command="unlink" title="Remove Link">
-                        <svg width="16" height="16" viewBox="0 0 326.157 326.157" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="16" height="16" viewBox="0 0 326.157 326.157" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
                             <!-- Top right X mark -->
-                            <path d="M206.342,275.032c-8.284,0-15,6.716-15,15v21.124c0,8.284,6.716,15,15,15s15-6.716,15-15v-21.124 C221.342,281.748,214.626,275.032,206.342,275.032z" fill="currentColor"></path>
+                            <path
+                                d="M206.342,275.032c-8.284,0-15,6.716-15,15v21.124c0,8.284,6.716,15,15,15s15-6.716,15-15v-21.124 C221.342,281.748,214.626,275.032,206.342,275.032z"
+                                fill="currentColor"></path>
                             <!-- Right side X mark -->
-                            <path d="M311.158,191.343l-21.125-0.001c-0.001,0,0,0-0.001,0c-8.283,0-15,6.716-15,14.999 c0,8.284,6.715,15.001,14.999,15.001l21.125,0.001c0.001,0,0.001,0,0.001,0c8.283,0,15-6.716,15-14.999 C326.157,198.06,319.442,191.343,311.158,191.343z" fill="currentColor"></path>
+                            <path
+                                d="M311.158,191.343l-21.125-0.001c-0.001,0,0,0-0.001,0c-8.283,0-15,6.716-15,14.999 c0,8.284,6.715,15.001,14.999,15.001l21.125,0.001c0.001,0,0.001,0,0.001,0c8.283,0,15-6.716,15-14.999 C326.157,198.06,319.442,191.343,311.158,191.343z"
+                                fill="currentColor"></path>
                             <!-- Diagonal X mark -->
-                            <path d="M276.127,254.913c-5.858-5.858-15.355-5.857-21.214-0.001c-5.857,5.858-5.858,15.355-0.001,21.214 l14.938,14.938c2.93,2.93,6.768,4.394,10.607,4.394c3.838,0,7.678-1.465,10.607-4.393c5.857-5.858,5.858-15.355,0.001-21.214 L276.127,254.913z" fill="currentColor"></path>
+                            <path
+                                d="M276.127,254.913c-5.858-5.858-15.355-5.857-21.214-0.001c-5.857,5.858-5.858,15.355-0.001,21.214 l14.938,14.938c2.93,2.93,6.768,4.394,10.607,4.394c3.838,0,7.678-1.465,10.607-4.393c5.857-5.858,5.858-15.355,0.001-21.214 L276.127,254.913z"
+                                fill="currentColor"></path>
                             <!-- Top left elements -->
-                            <path d="M119.813,51.124c8.284,0,15-6.716,15-15V15c0-8.284-6.716-15-15-15c-8.284,0-15,6.716-15,15v21.124 C104.813,44.408,111.529,51.124,119.813,51.124z" fill="currentColor"></path>
+                            <path
+                                d="M119.813,51.124c8.284,0,15-6.716,15-15V15c0-8.284-6.716-15-15-15c-8.284,0-15,6.716-15,15v21.124 C104.813,44.408,111.529,51.124,119.813,51.124z"
+                                fill="currentColor"></path>
                             <!-- Left side element -->
-                            <path d="M36.124,134.815c8.284,0,15-6.716,15-14.999c0-8.284-6.715-15.001-15-15.001L15,104.814h0 c-8.284,0-15,6.716-15,14.999C0,128.097,6.715,134.814,15,134.814L36.124,134.815C36.124,134.815,36.124,134.815,36.124,134.815z" fill="currentColor"></path>
+                            <path
+                                d="M36.124,134.815c8.284,0,15-6.716,15-14.999c0-8.284-6.715-15.001-15-15.001L15,104.814h0 c-8.284,0-15,6.716-15,14.999C0,128.097,6.715,134.814,15,134.814L36.124,134.815C36.124,134.815,36.124,134.815,36.124,134.815z"
+                                fill="currentColor"></path>
                             <!-- Top left diagonal -->
-                            <path d="M50.029,71.243c2.929,2.93,6.768,4.394,10.607,4.394c3.838,0,7.678-1.465,10.607-4.393 c5.858-5.858,5.858-15.355,0-21.214L56.305,35.092c-5.857-5.858-15.355-5.857-21.213-0.001c-5.858,5.858-5.858,15.355,0,21.214 L50.029,71.243z" fill="currentColor"></path>
+                            <path
+                                d="M50.029,71.243c2.929,2.93,6.768,4.394,10.607,4.394c3.838,0,7.678-1.465,10.607-4.393 c5.858-5.858,5.858-15.355,0-21.214L56.305,35.092c-5.857-5.858-15.355-5.857-21.213-0.001c-5.858,5.858-5.858,15.355,0,21.214 L50.029,71.243z"
+                                fill="currentColor"></path>
                             <!-- Bottom left broken chain -->
-                            <path d="M194.898,237.323c5.858-5.857,5.858-15.355,0-21.213c-5.857-5.857-15.355-5.857-21.213,0l-42.423,42.423 c-0.002,0.002-0.003,0.003-0.005,0.005c-17.543,17.545-46.092,17.546-63.638,0s-17.546-46.095,0-63.641l42.426-42.426 c5.858-5.857,5.858-15.355,0-21.213c-5.857-5.857-15.355-5.857-21.213,0l-42.426,42.426c-29.243,29.242-29.243,76.823,0,106.066 c14.166,14.166,33,21.967,53.032,21.967c0.001,0,0,0,0.001,0c20.032,0,38.867-7.802,53.032-21.967 c0.002-0.002,0.003-0.003,0.005-0.005L194.898,237.323z" fill="currentColor"></path>
+                            <path
+                                d="M194.898,237.323c5.858-5.857,5.858-15.355,0-21.213c-5.857-5.857-15.355-5.857-21.213,0l-42.423,42.423 c-0.002,0.002-0.003,0.003-0.005,0.005c-17.543,17.545-46.092,17.546-63.638,0s-17.546-46.095,0-63.641l42.426-42.426 c5.858-5.857,5.858-15.355,0-21.213c-5.857-5.857-15.355-5.857-21.213,0l-42.426,42.426c-29.243,29.242-29.243,76.823,0,106.066 c14.166,14.166,33,21.967,53.032,21.967c0.001,0,0,0,0.001,0c20.032,0,38.867-7.802,53.032-21.967 c0.002-0.002,0.003-0.003,0.005-0.005L194.898,237.323z"
+                                fill="currentColor"></path>
                             <!-- Top right broken chain -->
-                            <path d="M279.75,46.405c-14.164-14.165-32.998-21.967-53.031-21.967c-0.001,0,0.001,0-0.001,0 c-20.032,0-38.867,7.802-53.032,21.967l-0.001,0.001l-0.001,0.001l-42.425,42.426c-5.858,5.857-5.858,15.355,0,21.213 c2.929,2.929,6.768,4.394,10.606,4.394c3.839,0,7.678-1.465,10.607-4.394l42.425-42.426l0.001-0.001l0.001-0.001 c8.499-8.499,19.8-13.18,31.82-13.18c12.02,0,23.319,4.681,31.818,13.18c17.546,17.546,17.546,46.095,0,63.641l-42.426,42.426 c-5.858,5.857-5.858,15.355,0,21.213c2.929,2.929,6.768,4.394,10.607,4.394c3.839,0,7.678-1.465,10.606-4.394l42.426-42.426 C308.993,123.23,308.993,75.648,279.75,46.405z" fill="currentColor"></path>
+                            <path
+                                d="M279.75,46.405c-14.164-14.165-32.998-21.967-53.031-21.967c-0.001,0,0.001,0-0.001,0 c-20.032,0-38.867,7.802-53.032,21.967l-0.001,0.001l-0.001,0.001l-42.425,42.426c-5.858,5.857-5.858,15.355,0,21.213 c2.929,2.929,6.768,4.394,10.606,4.394c3.839,0,7.678-1.465,10.607-4.394l42.425-42.426l0.001-0.001l0.001-0.001 c8.499-8.499,19.8-13.18,31.82-13.18c12.02,0,23.319,4.681,31.818,13.18c17.546,17.546,17.546,46.095,0,63.641l-42.426,42.426 c-5.858,5.857-5.858,15.355,0,21.213c2.929,2.929,6.768,4.394,10.607,4.394c3.839,0,7.678-1.465,10.606-4.394l42.426-42.426 C308.993,123.23,308.993,75.648,279.75,46.405z"
+                                fill="currentColor"></path>
                         </svg>
                     </button>
                 </div>
@@ -676,19 +819,25 @@
                 <div class="toolbar-group">
                     <button type="button" data-command="clearFormat" title="Clear Formatting">
                         <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M29.4384,16.5715l-7.985-7.9856a2.0014,2.0014,0,0,0-2.8291,0l-5.3584,5.3584L9,2H7L2,16H4l.999-3h6l.8035,2.4077L4.5858,22.6244a2,2,0,0,0,0,2.8282L9.1316,30h9.5908l10.716-10.717A1.9173,1.9173,0,0,0,29.4384,16.5715ZM5.6653,11l2.331-7,2.3355,7Zm12.229,17H9.96L6,24.0381l6.3123-6.3115L20.24,25.6538Zm3.76-3.76-7.9275-7.9272L20.0393,10l7.9268,7.9272Z" fill="currentColor"></path>
+                            <path
+                                d="M29.4384,16.5715l-7.985-7.9856a2.0014,2.0014,0,0,0-2.8291,0l-5.3584,5.3584L9,2H7L2,16H4l.999-3h6l.8035,2.4077L4.5858,22.6244a2,2,0,0,0,0,2.8282L9.1316,30h9.5908l10.716-10.717A1.9173,1.9173,0,0,0,29.4384,16.5715ZM5.6653,11l2.331-7,2.3355,7Zm12.229,17H9.96L6,24.0381l6.3123-6.3115L20.24,25.6538Zm3.76-3.76-7.9275-7.9272L20.0393,10l7.9268,7.9272Z"
+                                fill="currentColor"></path>
                         </svg>
                     </button>
                     <button type="button" data-command="undo" title="Undo">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3 7v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
-                            <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+                            <path d="M3 7v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" fill="none"></path>
+                            <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
                         </svg>
                     </button>
                     <button type="button" data-command="redo" title="Redo">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M21 7v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
-                            <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3L21 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+                            <path d="M21 7v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" fill="none"></path>
+                            <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3L21 13" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
                         </svg>
                     </button>
                 </div>
@@ -758,26 +907,41 @@
                     </button>
                     <div class="rte-dropdown-menu" style="height: 150px;">
                         <div class="rte-dropdown-option rte-placeholder selected" data-value="">Font Family</div>
-                        <div class="rte-dropdown-option font-preview" data-value="ms gothic,sans-serif" style="--font-family: &#39;MS Gothic&#39;, sans-serif;">MS Gothic</div>
-                        <div class="rte-dropdown-option font-preview" data-value="yu gothic,sans-serif" style="--font-family: &#39;Yu Gothic&#39;, sans-serif;">Yu Gothic</div>
-                        <div class="rte-dropdown-option font-preview" data-value="yu gothic light,sans-serif" style="--font-family: &#39;Yu Gothic Light&#39;, sans-serif;">Yu Gothic Light</div>
-                        <div class="rte-dropdown-option font-preview" data-value="arial,helvetica,sans-serif" style="--font-family: Arial, sans-serif;">Sans serif</div>
-                        <div class="rte-dropdown-option font-preview" data-value="times new roman,serif" style="--font-family: &#39;Times New Roman&#39;, serif;">Serif</div>
-                        <div class="rte-dropdown-option font-preview" data-value="arial black,sans-serif" style="--font-family: &#39;Arial Black&#39;, sans-serif;">Wide</div>
-                        <div class="rte-dropdown-option font-preview" data-value="arial narrow,sans-serif" style="--font-family: &#39;Arial Narrow&#39;, sans-serif;">Narrow</div>
-                        <div class="rte-dropdown-option font-preview" data-value="comic sans ms,sans-serif" style="--font-family: &#39;Comic Sans MS&#39;, sans-serif;">Comic Sans MS</div>
-                        <div class="rte-dropdown-option font-preview" data-value="courier new,monospace" style="--font-family: &#39;Courier New&#39;, monospace;">Courier New</div>
-                        <div class="rte-dropdown-option font-preview" data-value="garamond,serif" style="--font-family: Garamond, serif;">Garamond</div>
-                        <div class="rte-dropdown-option font-preview" data-value="georgia,serif" style="--font-family: Georgia, serif;">Georgia</div>
-                        <div class="rte-dropdown-option font-preview" data-value="tahoma,sans-serif" style="--font-family: Tahoma, sans-serif;">Tahoma</div>
-                        <div class="rte-dropdown-option font-preview" data-value="trebuchet ms,sans-serif" style="--font-family: &#39;Trebuchet MS&#39;, sans-serif;">Trebuchet MS</div>
-                        <div class="rte-dropdown-option font-preview" data-value="verdana,sans-serif" style="--font-family: Verdana, sans-serif;">Verdana</div>
+                        <div class="rte-dropdown-option font-preview" data-value="ms gothic,sans-serif"
+                            style="--font-family: &#39;MS Gothic&#39;, sans-serif;">MS Gothic</div>
+                        <div class="rte-dropdown-option font-preview" data-value="yu gothic,sans-serif"
+                            style="--font-family: &#39;Yu Gothic&#39;, sans-serif;">Yu Gothic</div>
+                        <div class="rte-dropdown-option font-preview" data-value="yu gothic light,sans-serif"
+                            style="--font-family: &#39;Yu Gothic Light&#39;, sans-serif;">Yu Gothic Light</div>
+                        <div class="rte-dropdown-option font-preview" data-value="arial,helvetica,sans-serif"
+                            style="--font-family: Arial, sans-serif;">Sans serif</div>
+                        <div class="rte-dropdown-option font-preview" data-value="times new roman,serif"
+                            style="--font-family: &#39;Times New Roman&#39;, serif;">Serif</div>
+                        <div class="rte-dropdown-option font-preview" data-value="arial black,sans-serif"
+                            style="--font-family: &#39;Arial Black&#39;, sans-serif;">Wide</div>
+                        <div class="rte-dropdown-option font-preview" data-value="arial narrow,sans-serif"
+                            style="--font-family: &#39;Arial Narrow&#39;, sans-serif;">Narrow</div>
+                        <div class="rte-dropdown-option font-preview" data-value="comic sans ms,sans-serif"
+                            style="--font-family: &#39;Comic Sans MS&#39;, sans-serif;">Comic Sans MS</div>
+                        <div class="rte-dropdown-option font-preview" data-value="courier new,monospace"
+                            style="--font-family: &#39;Courier New&#39;, monospace;">Courier New</div>
+                        <div class="rte-dropdown-option font-preview" data-value="garamond,serif"
+                            style="--font-family: Garamond, serif;">Garamond</div>
+                        <div class="rte-dropdown-option font-preview" data-value="georgia,serif"
+                            style="--font-family: Georgia, serif;">Georgia</div>
+                        <div class="rte-dropdown-option font-preview" data-value="tahoma,sans-serif"
+                            style="--font-family: Tahoma, sans-serif;">Tahoma</div>
+                        <div class="rte-dropdown-option font-preview" data-value="trebuchet ms,sans-serif"
+                            style="--font-family: &#39;Trebuchet MS&#39;, sans-serif;">Trebuchet MS</div>
+                        <div class="rte-dropdown-option font-preview" data-value="verdana,sans-serif"
+                            style="--font-family: Verdana, sans-serif;">Verdana</div>
                     </div>
                 </div>
 
                 <!-- Formatting Dropdown -->
                 <div class="tiptap-dropdown">
-                    <button type="button" class="rte-dropdown-button is-active" data-command="heading" title="Text Formatting">
+                    <button type="button" class="rte-dropdown-button is-active" data-command="heading"
+                        title="Text Formatting">
                         <span class="rte-dropdown-text">Paragraph</span>
                         <svg class="rte-dropdown-arrow" viewBox="0 0 12 12" fill="currentColor">
                             <path d="M6 8.5L2.5 5h7L6 8.5z"></path>
@@ -1003,4 +1167,6 @@
     </div>
 
 
-</body></html>
+</body>
+
+</html>
