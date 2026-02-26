@@ -1,0 +1,213 @@
+.msg-section .alert {
+    border-radius: 10px !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.course .content-box--content span i {
+    margin-right: 3px;
+}
+
+.course .content-box--content h6 span {
+    width: fit-content;
+}
+
+.test-review .review-content li h3 a {
+	font-weight: 600;
+}
+
+    .test-review .review-content li h3 a:hover {
+        text-decoration: underline;
+    }
+
+.pull-down-correct-ans {
+    width: unset;
+}
+
+.mock-test-name .div-header--content h2 {
+    font-size: 23px;
+}
+
+.dashboard .row .box .btn {
+    text-transform: none;
+}
+
+.summary-result-pass {
+    color: #669900;
+    margin-left: 5%;
+    font-size: 24px;
+}
+
+.summary-result-fail {
+    color: #000000;
+    margin-left: 5%;
+    font-size: 24px;
+}
+
+.learner-dashboard .notification .dropdown-menu a {
+    text-transform: none;
+}
+
+.learner-dashboard .active .full-title
+{
+    max-width:100%;
+}
+
+.learner-dashboard .course-card-header {
+    border: 1px solid #4c78bb;
+    border-bottom: none;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: #fff;
+    font-size: 12px !important;
+    padding: 8px 2px;
+}
+
+    .learner-dashboard .course-card-header span {
+        color: #fff;
+        font-size: 17px;
+        font-weight: 600;
+        padding-left: 14px;
+    }
+
+    .learner-dashboard .course-card-header .expire {
+        background-color: #ffffff;
+        border-radius: 50px 0px 0px 50px;
+        color: #de1326;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 26px;
+        margin-right: -3px;
+        padding: 0px 5px 0px 10px;
+    }
+
+.learner-dashboard .course-card-body {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    padding: 5px 16px 10px 16px !important;
+}
+
+    .learner-dashboard .course-card-body .course-title-section {
+        height: 52px;
+        margin-bottom: 1.25rem;
+    }
+
+        .learner-dashboard .course-card-body .course-title-section h4 {
+            height: unset !important;
+            margin-bottom: unset !important;
+        }
+
+        .learner-dashboard .course-card-body .course-title-section .truncate {
+            display: -webkit-box;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+        }
+
+    .learner-dashboard .course-card-body .course-description-section {
+        height: 44px;
+        margin-bottom: 0.25rem;
+    }
+
+        .learner-dashboard .course-card-body .course-description-section h6 {
+            height: unset !important;
+            line-height: 19px !important;
+            margin-bottom: unset !important;
+        }
+
+        .learner-dashboard .course-card-body .course-description-section .truncate {
+            display: -webkit-box;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 1;
+        }
+
+    .learner-dashboard .course-card-body .progress {
+        margin-top: 8px;
+    }
+
+.learner-dashboard .mandatory-course-card .course-card-header {
+    background-color: #0a4e8d;
+}
+
+.learner-dashboard .optional-course-card .course-card-header {
+    background-color: #0a8c7f;
+}
+
+.learner-dashboard .history-table .dataTables_wrapper {
+    width: 100% !important;
+}
+
+    .learner-dashboard .history-table .dataTables_wrapper table {
+        width: 100% !important;
+    }
+
+
+/* ****** Start :::: Release Aler notification */
+#release-alert {
+    margin-top: -14px;
+    display: none;
+}
+
+.alert > .start-icon {
+    margin-right: 0;
+    min-width: 20px;
+    text-align: center;
+}
+
+.alert > .start-icon {
+    margin-right: 5px;
+}
+
+.cross {
+    font-size: 18px;
+    color: #ff7f8a;
+    text-shadow: none;
+}
+
+.alert-simple.alert-release-message {
+    border: 1px solid rgb(233 132 153);
+    background-color: #f8e5e9;
+    box-shadow: 0px 0px 2px #dac6ca;
+    color: #ff7f8a;
+    transition: 0.5s;
+    /*cursor: pointer;*/
+}
+
+.alert-release-message:hover {
+    background-color: #f7d9df;
+    transition: 0.5s;
+}
+
+.alert-release-message > .close {
+    margin: -0.2rem 0.9rem !important;
+}
+
+.alert-release-message > .hide {
+    float: right;
+    position: relative;
+    border: none;
+    background-color: transparent;
+    color: #4376eccf;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: .9rem;
+    opacity: 79%;
+    margin: 0rem 0.9rem;
+}
+
+    .alert-release-message > .hide:hover {
+        color: #004eff;
+    }
+.start-icon {
+    color: #ff7f8a !important;
+    
+}
+.panel-notify {
+    display: none;
+    padding: .12rem 0px;
+    color: #00000099;
+}
+
+/* ****** End :::: Release Aler notification */
